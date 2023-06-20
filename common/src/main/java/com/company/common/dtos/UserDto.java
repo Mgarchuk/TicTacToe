@@ -18,17 +18,13 @@ public class UserDto {
     @NotBlank
     private String username;
 
-    @NotNull
     @Positive
     private float rating;
 
     @NotBlank
     @Min(8)
-    @Max(32)
+    @Max(64)
     private String password;
-
-    @NotBlank
-    private String salt;
 
     @Size(min = 3, max = 264)
     private String email;

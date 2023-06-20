@@ -13,10 +13,18 @@ repositories {
 }
 
 dependencies {
+    implementation project(':common')
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation project(':common')
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'mysql:mysql-connector-java:8.0.27'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server' // ToDo: move to common
+    implementation 'org.springframework.security:spring-security-oauth2-client' // ToDo: move to common
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'  // ToDo: move to common
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'  // ToDo: move to common
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'  // ToDo: move to common
     compileOnly 'org.projectlombok:lombok:1.18.28'
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
 }
