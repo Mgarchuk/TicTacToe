@@ -1,0 +1,6 @@
+rootProject.name = 'TicTacToe'
+
+include 'user-service'
+include 'battle-service'
+include 'statistic-service'
+include 'common'
