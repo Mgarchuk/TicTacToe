@@ -6,12 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class MoveDto {
 
-    private int id;
+    private UUID id;
 
     @NotNull(message = "game id must not be empty")
     private int gameId;

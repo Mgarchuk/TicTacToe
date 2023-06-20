@@ -3,14 +3,14 @@ package com.company.common.models;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity(name = "move")
 @Data
 public class MoveEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id", referencedColumnName = "id")

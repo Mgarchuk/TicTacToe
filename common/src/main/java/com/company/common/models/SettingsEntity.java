@@ -3,14 +3,14 @@ package com.company.common.models;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity(name = "settings")
 @Data
 public class SettingsEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private UUID id;
 
     @Column(name = "square_size")
     private int squareSize;
@@ -18,11 +18,11 @@ public class SettingsEntity {
     @Column(name = "lines_count_for_win")
     private int linesCountForWin;
 
-    @Column(name = "cross_player_id")
-    private int crossPlayerId;
+    @Column(name = "x_player_id")
+    private int xPlayerId;
 
-    @Column(name = "zero_player_id")
-    private int zeroPlayerId;
+    @Column(name = "o_player_id")
+    private int oPlayerId;
 
     @Column(name = "move_time_limit")
     private int moveTimeLimit;

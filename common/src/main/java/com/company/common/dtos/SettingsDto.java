@@ -8,12 +8,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class SettingsDto {
 
-    private int id;
+    private UUID id;
 
     @Min(3)
     @Max(100)
@@ -23,11 +25,11 @@ public class SettingsDto {
     @Min(3)
     private int linesCountForWin;
 
-    @NotNull(message = "cross player id must not be empty")
-    private int crossPlayerId;
+    @NotNull(message = "x player id must not be empty")
+    private int xPlayerId;
 
-    @NotNull(message = "cross player id must not be empty")
-    private int zeroPlayerId;
+    @NotNull(message = "o player id must not be empty")
+    private int oPlayerId;
 
     @NotNull(message = "move time limit must not be empty")
     @Positive
