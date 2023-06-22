@@ -41,20 +41,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/auth/**", "/oauth2/**")
                 .permitAll()
                 .anyRequest()
-                .authenticated()
-                .and()
-                .oauth2Login()
-                .authorizationEndpoint()
-                .baseUri("/oauth2/authorize")
-                .and()
-                .redirectionEndpoint()
-                .baseUri("/oauth2/callback/*");
-             //   .and()
-               // .userInfoEndpoint()
-               // .userService(customOAuth2UserService)
-              //  .and()
-              //  .successHandler(oAuth2AuthenticationSuccessHandler)
-              //  .failureHandler(oAuth2AuthenticationFailureHandler);
+                .authenticated();
 
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }

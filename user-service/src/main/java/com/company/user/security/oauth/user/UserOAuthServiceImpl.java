@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -30,7 +31,6 @@ public class UserOAuthServiceImpl extends DefaultOAuth2UserService {
         } catch (AuthenticationException ex) {
             throw ex;
         } catch (Exception ex) {
-            // Throwing an instance of AuthenticationException will trigger the OAuth2AuthenticationFailureHandler
             throw new InternalAuthenticationServiceException(ex.getMessage(), ex.getCause());
         }
     }
@@ -50,7 +50,7 @@ public class UserOAuthServiceImpl extends DefaultOAuth2UserService {
                         user.getProvider() + " account. Please use your " + user.getProvider() +
                         " account to login.");
             }
-            user = updateExistingUser(user, oAuth2UserInfo);
+            user = updateExistingUserIfChangedUsername(user, oAuth2UserInfo);
         } else {
             user = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
         }
@@ -67,9 +67,11 @@ public class UserOAuthServiceImpl extends DefaultOAuth2UserService {
         return userRepository.save(user);
     }
 
-    private UserEntity updateExistingUser(UserEntity existingUser, OAuthUserInfo oAuth2UserInfo) {
-        existingUser.setUsername(oAuth2UserInfo.getName());
+    private UserEntity updateExistingUserIfChangedUsername(UserEntity existingUser, OAuthUserInfo oAuth2UserInfo) {
+        String newUsername = oAuth2UserInfo.getName();
+        if (!newUsername.equals(existingUser.getUsername())) {
+            existingUser.setUsername(oAuth2UserInfo.getName());
+        }
         return userRepository.save(existingUser);
     }
-
 }

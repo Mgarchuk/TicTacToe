@@ -23,12 +23,12 @@ public class AuthController {
 
     @PostMapping("/sign-up")
     ResponseEntity<UserDto> registerUser(@RequestBody SignUpRequestDto signUpRequest) {
-        final UserEntity user = authService.registerUser(signUpRequest);
-        final UserDto ret = new UserDto();
-        ret.setEmail(user.getEmail());
-        ret.setId(user.getId());
-        ret.setUsername(user.getUsername());
-        return new ResponseEntity<>(ret, HttpStatus.OK);
+        final UserEntity registeredUser = authService.registerUser(signUpRequest);
+        final UserDto registeredUserDto = new UserDto();
+        registeredUserDto.setEmail(registeredUser.getEmail());
+        registeredUserDto.setId(registeredUser.getId());
+        registeredUserDto.setUsername(registeredUser.getUsername());
+        return new ResponseEntity<>(registeredUserDto, HttpStatus.OK);
     }
 
     @PostMapping("/login")
