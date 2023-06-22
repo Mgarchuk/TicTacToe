@@ -1,0 +1,27 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+          issuer-uri: https://accounts.google.com
+      client:
+        registration:
+          google:
+            client-secret: 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
+            client-id: 456044610015-t9qpgr0pmovnk5qc6mfh08qvsl3prb23.apps.googleusercontent.com
+            scope: openid,profile,email
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    url: jdbc:mysql://localhost:3306/tic_tac_toe?useSSL=false&createDatabaseIfNotExist=true
+    password: root
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: 'true'
+app:
+  auth:
+    tokenSecret: 04ca023b39512e46d0c2cf4b48d5aac61d34302994c87ed4eff225dcf3b0a218739f3897051a057f9b846a69ea2927a587044164b7bae5e1306219d50b588cb1
+    tokenExpMs: 864000000

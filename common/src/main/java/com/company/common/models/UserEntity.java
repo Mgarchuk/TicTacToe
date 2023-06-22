@@ -1,7 +1,9 @@
 package com.company.common.models;
 
+import com.company.common.models.enums.AuthProvider;
 import com.company.common.models.enums.Role;
 import lombok.Data;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,12 +14,15 @@ import java.util.UUID;
 public class UserEntity {
 
     @Id
+    @Type(type = "org.hibernate.type.UUIDCharType")
     private UUID id;
     private String username;
     private float rating;
     private String password;
-    private String salt;
     private String email;
+
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
