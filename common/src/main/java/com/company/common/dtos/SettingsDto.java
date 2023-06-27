@@ -21,8 +21,8 @@ public class SettingsDto {
     @Max(100)
     private int squareSize;
 
-    //ToDo: add max restriction (dynamically)
     @Min(3)
+    @Max(100)
     private int linesCountForWin;
 
     @NotNull(message = "x player id must not be empty")

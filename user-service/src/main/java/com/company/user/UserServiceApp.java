@@ -1,6 +1,5 @@
 package com.company.user;
 
-import com.company.common.models.UserEntity;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

@@ -2,7 +2,7 @@ package com.company.common.models;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity(name = "settings")

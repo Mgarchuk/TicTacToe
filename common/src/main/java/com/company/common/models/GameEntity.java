@@ -3,7 +3,7 @@ package com.company.common.models;
 import com.company.common.models.enums.GameStatus;
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 import java.util.UUID;
 

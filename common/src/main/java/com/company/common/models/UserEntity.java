@@ -3,7 +3,10 @@ package com.company.common.models;
 import com.company.common.models.enums.Role;
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.type.descriptor.jdbc.VarcharJdbcType;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +15,8 @@ import java.util.UUID;
 public class UserEntity {
 
     @Id
+    @GeneratedValue
+    @JdbcType(VarcharJdbcType.class)
     private UUID id;
     private String username;
     private float rating;

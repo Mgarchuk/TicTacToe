@@ -24,7 +24,7 @@ public class UserDto {
 
     @NotBlank
     @Min(8)
-    @Max(32)
+    @Max(64)
     private String password;
 
     @NotBlank
