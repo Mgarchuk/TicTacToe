@@ -1,6 +1,5 @@
 package com.company.user.services;
 
-
 import com.company.user.dtos.LogInRequestDto;
 import com.company.user.dtos.SignUpRequestDto;
 import com.company.common.models.UserEntity;

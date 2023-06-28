@@ -9,7 +9,7 @@ import java.util.UUID;
 @Service
 public class GameService {
 
-    public GameEntity add(GameDto gameDto) {
+    public GameEntity create(GameDto gameDto) {
         return null;
     }
 

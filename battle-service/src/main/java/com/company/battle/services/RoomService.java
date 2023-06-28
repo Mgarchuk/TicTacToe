@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RoomService {
-    public RoomEntity add(RoomDto roomDto) {
+    public RoomEntity create(RoomDto roomDto) {
         return null;
     }
     public RoomEntity getByLink(String link) {

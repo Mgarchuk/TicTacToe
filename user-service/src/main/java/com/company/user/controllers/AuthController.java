@@ -3,7 +3,6 @@ package com.company.user.controllers;
 import com.company.common.dtos.UserDto;
 import com.company.user.dtos.LogInRequestDto;
 import com.company.user.dtos.SignUpRequestDto;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,17 +12,17 @@ import java.util.List;
 public class AuthController {
 
     @PostMapping("/sign-up")
-    ResponseEntity<UserDto> registerUser(@RequestBody SignUpRequestDto signUpRequest) {
+    UserDto registerUser(@RequestBody SignUpRequestDto signUpRequest) {
         return null;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody LogInRequestDto loginRequest) {
+    public String authenticateUser(@RequestBody LogInRequestDto loginRequest) {
         return null;
     }
 
     @GetMapping
-    ResponseEntity<List<UserDto>> getAllUsers() {
+    List<UserDto> getAllUsers() {
         return null;
     }
 }
