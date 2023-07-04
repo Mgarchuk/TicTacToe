@@ -14,13 +14,11 @@ public class GameEntity {
     @Id
     private UUID id;
 
+    private String link;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "settings_id", referencedColumnName = "id")
     private SettingsEntity settings;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id", referencedColumnName = "id")
-    private RoomEntity room;
 
     @Column(name = "game_status")
     @Enumerated(EnumType.STRING)

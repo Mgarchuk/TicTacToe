@@ -16,17 +16,27 @@ public class GameController {
         return null;
     }
 
+    @GetMapping("/{link}")
+    GameDto getGameByLink(@PathVariable String link) {
+        return null;
+    }
+
     @GetMapping
     List<GameDto> getActiveGames() {
         return null;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     GameDto createGame(@RequestBody GameDto gameDto) {
         return null;
     }
 
-    @PutMapping
+    @PutMapping("/join")
+    GameDto joinGame(@RequestBody String link) {
+        return null;
+    }
+
+    @PutMapping("/leave")
     GameDto leaveGame(@RequestBody GameDto gameDto) {
         return null;
     }

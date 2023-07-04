@@ -17,6 +17,10 @@ public class GameService {
         return null;
     }
 
+    public GameEntity getByLink(String link) {
+        return null;
+    }
+
     public GameEntity update(GameDto gameDto) {
         return null;
     }
