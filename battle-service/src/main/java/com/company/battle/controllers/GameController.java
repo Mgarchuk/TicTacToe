@@ -40,29 +40,4 @@ public class GameController {
     GameDto leaveGame(@RequestBody GameDto gameDto) {
         return null;
     }
-
-    @GetMapping("/{id}")
-    SettingsDto getSettingsByGameId(@PathVariable UUID id) {
-        return null;
-    }
-
-    @PostMapping("/default")
-    SettingsDto addDefaultSettings() {
-        return null;
-    }
-
-    @PostMapping("/custom")
-    SettingsDto addCustomSettings(@RequestBody SettingsDto settingsDto) {
-        return null;
-    }
-
-    @PutMapping("/change-settings")
-    SettingsDto changeSettings(@RequestBody SettingsDto settingsDto) {
-        return null;
-    }
-
-    @PutMapping("/change-settings-to-default")
-    SettingsDto resetSettingsToDefault() {
-        return null;
-    }
 }

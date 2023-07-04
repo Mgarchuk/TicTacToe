@@ -8,14 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class SettingsDto {
-
-    private UUID id;
 
     @Min(3)
     @Max(100)
@@ -34,7 +30,4 @@ public class SettingsDto {
     @NotNull(message = "move time limit must not be empty")
     @Positive
     private int moveTimeLimit;
-
-    @NotNull(message = "game id must not be empty")
-    private int gameId;
 }

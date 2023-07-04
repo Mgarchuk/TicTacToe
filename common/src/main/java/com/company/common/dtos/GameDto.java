@@ -17,8 +17,8 @@ public class GameDto {
 
     private String link;
 
-    @NotNull(message = "settings id must not be empty")
-    private int settingsId;
+    @NotNull(message = "settings dto must not be empty")
+    private SettingsDto settings;
 
     @NotNull(message = "Game status must not be null")
     private GameStatus status;

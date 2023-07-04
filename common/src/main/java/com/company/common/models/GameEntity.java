@@ -16,8 +16,7 @@ public class GameEntity {
 
     private String link;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "settings_id", referencedColumnName = "id")
+    @Embedded
     private SettingsEntity settings;
 
     @Column(name = "game_status")
