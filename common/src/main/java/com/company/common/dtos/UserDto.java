@@ -23,11 +23,6 @@ public class UserDto {
     private float rating;
 
     @NotBlank
-    @Min(8)
-    @Max(64)
-    private String password;
-
-    @NotBlank
     private String salt;
 
     @Size(min = 3, max = 264)

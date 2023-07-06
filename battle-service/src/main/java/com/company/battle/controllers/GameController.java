@@ -31,8 +31,8 @@ public class GameController {
         return null;
     }
 
-    @PutMapping("/join")
-    GameDto joinGame(@RequestBody String link) {
+    @PutMapping("/join/{link}")
+    GameDto joinGame(@PathVariable String link) {
         return null;
     }
 
