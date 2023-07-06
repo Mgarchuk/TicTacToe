@@ -11,12 +11,12 @@ import java.util.UUID;
 public class MoveController {
 
     @GetMapping("/{gameId}")
-    List<MoveDto> getHistoryByGameId(@PathVariable UUID gameId) {
+    public List<MoveDto> getHistoryByGameId(@PathVariable UUID gameId) {
         return null;
     }
 
     @PostMapping
-    MoveDto addMove(@RequestBody MoveDto moveDto) {
+    public MoveDto addMove(@RequestBody MoveDto moveDto) {
         return null;
     }
 }

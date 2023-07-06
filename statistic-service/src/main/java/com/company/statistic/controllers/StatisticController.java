@@ -12,7 +12,7 @@ import java.util.UUID;
 public class StatisticController {
 
     @GetMapping("/{id}")
-    Integer getRating(@PathVariable UUID userId) {
+    public Integer getRating(@PathVariable UUID userId) {
         return null;
     }
 }

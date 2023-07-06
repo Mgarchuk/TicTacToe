@@ -12,32 +12,32 @@ import java.util.UUID;
 public class GameController {
 
     @GetMapping("/{id}")
-    GameDto getGameById(@PathVariable UUID id) {
+    public GameDto getGameById(@PathVariable UUID id) {
         return null;
     }
 
     @GetMapping("/{link}")
-    GameDto getGameByLink(@PathVariable String link) {
+    public GameDto getGameByLink(@PathVariable String link) {
         return null;
     }
 
     @GetMapping
-    List<GameDto> getActiveGames() {
+    public List<GameDto> getActiveGames() {
         return null;
     }
 
     @PostMapping("/create")
-    GameDto createGame(@RequestBody GameDto gameDto) {
+    public GameDto createGame(@RequestBody GameDto gameDto) {
         return null;
     }
 
     @PutMapping("/join/{link}")
-    GameDto joinGame(@PathVariable String link) {
+    public GameDto joinGame(@PathVariable String link) {
         return null;
     }
 
     @PutMapping("/leave")
-    GameDto leaveGame(@RequestBody GameDto gameDto) {
+    public GameDto leaveGame(@RequestBody GameDto gameDto) {
         return null;
     }
 }

@@ -1,9 +1,9 @@
 package com.company.common.models;
 
 import com.company.common.models.enums.GameStatus;
+import jakarta.persistence.*;
 import lombok.Data;
 
-import jakarta.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +12,7 @@ import java.util.UUID;
 public class GameEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String link;

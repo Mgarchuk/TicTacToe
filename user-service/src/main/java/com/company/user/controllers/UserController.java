@@ -13,7 +13,7 @@ import java.util.UUID;
 public class UserController {
 
     @GetMapping("/{id}")
-    UserDto getUserById(@PathVariable UUID id) {
+    public UserDto getUserById(@PathVariable UUID id) {
         return null;
     }
 }
