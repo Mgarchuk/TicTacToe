@@ -1,4 +1,4 @@
-package com.company.user.repositories;
+package com.company.common.repositories;
 
 import com.company.common.models.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

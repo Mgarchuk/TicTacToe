@@ -4,6 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 @Embeddable
 public class SettingsEntity {
@@ -15,10 +17,10 @@ public class SettingsEntity {
     private int linesCountForWin;
 
     @Column(name = "x_player_id")
-    private int xPlayerId;
+    private UUID xPlayerId;
 
     @Column(name = "o_player_id")
-    private int oPlayerId;
+    private UUID oPlayerId;
 
     @Column(name = "move_time_limit")
     private int moveTimeLimit;

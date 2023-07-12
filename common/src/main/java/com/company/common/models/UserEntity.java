@@ -26,4 +26,7 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user")
     private List<MoveEntity> moves;
+
+    @OneToMany(mappedBy = "winner")
+    private List<GameEntity> games;
 }
