@@ -13,13 +13,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class MoveDto {
 
-    private UUID id;
+    private String id;
 
     @NotNull(message = "game id must not be empty")
-    private int gameId;
+    private String gameId;
 
     @NotNull(message = "user id must not be empty")
-    private int userId;
+    private String userId;
 
     //ToDo: add regular expression and change min and max values
     @Size(min = 1, max = 10, message = "description must have size between 1 and 10")

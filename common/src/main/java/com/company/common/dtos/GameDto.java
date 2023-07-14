@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class GameDto {
 
-    private UUID id;
+    private String id;
 
     private String link;
 
@@ -26,6 +26,7 @@ public class GameDto {
 
     private GameStatus status;
 
+    private String winnerId;
     @NotNull(message = "Game status must not be null")
     private GameVisibility visibility;
 }

@@ -21,11 +21,9 @@ public class SettingsDto {
     @Max(100)
     private int linesCountForWin;
 
-    @NotNull(message = "x player id must not be empty")
-    private int xPlayerId;
+    private String xPlayerId;
 
-    @NotNull(message = "o player id must not be empty")
-    private int oPlayerId;
+    private String oPlayerId;
 
     @NotNull(message = "move time limit must not be empty")
     @Positive
