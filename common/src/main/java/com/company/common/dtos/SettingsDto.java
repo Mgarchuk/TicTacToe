@@ -2,8 +2,6 @@ package com.company.common.dtos;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,7 +23,8 @@ public class SettingsDto {
 
     private String oPlayerId;
 
-    @NotNull(message = "move time limit must not be empty")
-    @Positive
+    //ToDo: Check null
+    @Min(2)
+    @Max(300)
     private int moveTimeLimit;
 }

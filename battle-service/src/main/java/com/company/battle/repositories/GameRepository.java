@@ -31,5 +31,6 @@ public interface GameRepository extends JpaRepository<GameEntity, UUID> {
             "and g.visibility = 'PUBLIC'",
             nativeQuery = true)
     Optional<GameEntity> findGame(@Param("squareSize") int squareSize, @Param("linesCount") int linesCountForWin, @Param("timeLimit") int moveTimeLimit);
+
     List<GameEntity> findByVisibility(GameVisibility visibility);
 }

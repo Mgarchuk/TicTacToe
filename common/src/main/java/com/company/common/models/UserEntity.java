@@ -15,12 +15,11 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String username;
-    private float rating;
+    private int rating;
     private String password;
     private String salt;
     private String email;
 
-    @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
 

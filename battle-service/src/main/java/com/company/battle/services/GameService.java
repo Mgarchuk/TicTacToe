@@ -32,8 +32,7 @@ public class GameService {
     }
 
     public GameEntity getByLink(String link) {
-        Optional<GameEntity> gameEntity = gameRepository.findByLink(link);
-        return gameEntity.orElse(null);
+        return gameRepository.findByLink(link).orElse(null);
     }
 
     public List<GameEntity> getPublicGames() {

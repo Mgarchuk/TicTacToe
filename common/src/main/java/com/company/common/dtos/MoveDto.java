@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -14,6 +14,7 @@ import java.util.UUID;
 public class MoveDto {
 
     private String id;
+    private LocalDateTime creationDate;
 
     @NotNull(message = "game id must not be empty")
     private String gameId;

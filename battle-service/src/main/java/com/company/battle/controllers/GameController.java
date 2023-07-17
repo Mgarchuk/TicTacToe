@@ -24,6 +24,7 @@ public class GameController {
     private final GameService gameService;
 
     private final GameMapper gameMapper = GameMapper.INSTANCE;
+
     private final SettingsMapper settingsMapper = SettingsMapper.INSTANCE;
 
     @GetMapping("/{id}")
@@ -54,8 +55,9 @@ public class GameController {
     }
 
     //ToDo: change userId as parameter to userId from authorization
+    //ToDo: add check that linesCuntForWin less then squareSize
     @PostMapping("/create")
-    public GameDto createGame(@RequestBody GameDto gameDto,  @PathVariable UUID userId) {
+    public GameDto createGame(@RequestBody GameDto gameDto, @PathVariable UUID userId) {
         GameEntity gameEntity = gameMapper.toEntity(gameDto);
         gameEntity = gameService.create(gameEntity, userId);
         return gameMapper.toDTO(gameEntity);

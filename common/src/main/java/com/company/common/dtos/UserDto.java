@@ -20,7 +20,7 @@ public class UserDto {
 
     @NotNull
     @Positive
-    private float rating;
+    private int rating;
 
     @NotBlank
     private String salt;

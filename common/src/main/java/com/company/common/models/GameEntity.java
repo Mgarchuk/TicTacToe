@@ -4,7 +4,6 @@ import com.company.common.models.enums.GameStatus;
 import com.company.common.models.enums.GameVisibility;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,11 +16,6 @@ public class GameEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    private String link;
-
-    @CreatedDate
-    private LocalDateTime creationDate;
 
     @Embedded
     private SettingsEntity settings;
@@ -38,4 +32,7 @@ public class GameEntity {
 
     @OneToMany(mappedBy = "game")
     private List<MoveEntity> moves;
+
+    private LocalDateTime creationDate;
+    private String link;
 }
