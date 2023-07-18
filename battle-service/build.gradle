@@ -16,6 +16,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    implementation 'org.springframework.boot:spring-boot-starter-validation:3.1.1'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
     implementation project(':common')
 }

@@ -1,5 +1,6 @@
 package com.company.common.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -16,13 +17,16 @@ public class MoveDto {
     private String id;
     private LocalDateTime creationDate;
 
-    @NotNull(message = "game id must not be empty")
+    @NotNull
+    @JsonProperty("game_id")
     private String gameId;
 
-    @NotNull(message = "user id must not be empty")
+    @NotNull
+    @JsonProperty("user_id")
     private String userId;
 
     //ToDo: add regular expression and change min and max values
-    @Size(min = 1, max = 10, message = "description must have size between 1 and 10")
+    //ToDo: check null
+    @Size(min = 1, max = 5, message = "description must have size between 1 and 5")
     private String description;
 }

@@ -7,6 +7,7 @@ import com.company.common.dtos.GameDto;
 import com.company.common.dtos.SettingsDto;
 import com.company.common.models.GameEntity;
 import com.company.common.models.SettingsEntity;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -48,18 +49,18 @@ public class GameController {
     }
 
     @GetMapping("/find-game")
-    public GameDto findGame(@RequestBody SettingsDto settingsDto) {
+    public GameDto findGame(@Valid @RequestBody SettingsDto settingsDto) {
         SettingsEntity settingsEntity = settingsMapper.toEntity(settingsDto);
         GameEntity gameEntity = gameService.findGame(settingsEntity);
         return gameMapper.toDTO(gameEntity);
     }
 
-    //ToDo: change userId as parameter to userId from authorization
+    //ToDo: change randomUUID to userId from authorization
     //ToDo: add check that linesCuntForWin less then squareSize
     @PostMapping("/create")
-    public GameDto createGame(@RequestBody GameDto gameDto, @PathVariable UUID userId) {
+    public GameDto createGame(@Valid @RequestBody GameDto gameDto) {
         GameEntity gameEntity = gameMapper.toEntity(gameDto);
-        gameEntity = gameService.create(gameEntity, userId);
+        gameEntity = gameService.create(gameEntity, UUID.randomUUID());
         return gameMapper.toDTO(gameEntity);
     }
 
@@ -72,7 +73,7 @@ public class GameController {
 
     //ToDo: change userId as parameter to userId from authorization
     @PutMapping("/leave/{userId}")
-    public GameDto leaveGame(@RequestBody GameDto gameDto, @PathVariable UUID userId) {
+    public GameDto leaveGame(@Valid @RequestBody GameDto gameDto, @PathVariable UUID userId) {
         GameEntity gameEntity = gameMapper.toEntity(gameDto);
         gameEntity = gameService.leave(gameEntity, userId);
         return gameMapper.toDTO(gameEntity);

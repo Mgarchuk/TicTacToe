@@ -1,7 +1,7 @@
 package com.company.common.dtos;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,18 +13,25 @@ public class SettingsDto {
 
     @Min(3)
     @Max(100)
-    private int squareSize;
+    @NotNull
+    @JsonProperty("square_size")
+    private Integer squareSize;
 
     @Min(3)
     @Max(100)
-    private int linesCountForWin;
+    @NotNull
+    @JsonProperty("lines_count_for_win")
+    private Integer linesCountForWin;
 
+    @JsonProperty("x_player_id")
     private String xPlayerId;
 
+    @JsonProperty("o_player_id")
     private String oPlayerId;
 
-    //ToDo: Check null
     @Min(2)
     @Max(300)
-    private int moveTimeLimit;
+    @NotNull
+    @JsonProperty("move_time_limit")
+    private Integer moveTimeLimit;
 }

@@ -2,6 +2,7 @@ package com.company.common.dtos;
 
 import com.company.common.models.enums.GameStatus;
 import com.company.common.models.enums.GameVisibility;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class GameDto {
 
     private LocalDateTime creationDate;
 
+    @Valid
     @NotNull(message = "settings dto must not be empty")
     private SettingsDto settings;
 
@@ -27,6 +29,6 @@ public class GameDto {
 
     private String winnerId;
 
-    @NotNull(message = "Game status must not be null")
+    @NotNull
     private GameVisibility visibility;
 }

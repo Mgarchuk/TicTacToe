@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,7 +29,9 @@ public class MoveService {
     //ToDo: check gameEntity -- null and add in mapper converting gameId to Game
     //ToDO: check or save gameRepository all: game and moves
     public MoveEntity add(MoveEntity moveEntity) {
+        moveEntity.setCreationDate(LocalDateTime.now());
         moveEntity = moveRepository.save(moveEntity);
+        //ToDo: add check on existing move
         //ToDo: check saving moves in gameEntity;
         gameRepository.save(moveEntity.getGame());
 
