@@ -1,9 +1,9 @@
 package com.company.common.models;
 
 import com.company.common.models.enums.GameStatus;
+import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,15 +12,13 @@ import java.util.UUID;
 public class GameEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "settings_id", referencedColumnName = "id")
-    private SettingsEntity settings;
+    private String link;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id", referencedColumnName = "id")
-    private RoomEntity room;
+    @Embedded
+    private SettingsEntity settings;
 
     @Column(name = "game_status")
     @Enumerated(EnumType.STRING)

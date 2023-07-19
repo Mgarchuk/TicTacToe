@@ -1,16 +1,12 @@
 package com.company.common.models;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import lombok.Data;
 
-import javax.persistence.*;
-import java.util.UUID;
-
-@Entity(name = "settings")
 @Data
+@Embeddable
 public class SettingsEntity {
-
-    @Id
-    private UUID id;
 
     @Column(name = "square_size")
     private int squareSize;
@@ -26,7 +22,4 @@ public class SettingsEntity {
 
     @Column(name = "move_time_limit")
     private int moveTimeLimit;
-
-    @OneToOne(mappedBy = "settings", fetch = FetchType.LAZY)
-    private GameEntity game;
 }

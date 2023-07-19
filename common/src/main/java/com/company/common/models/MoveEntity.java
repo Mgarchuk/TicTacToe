@@ -2,7 +2,7 @@ package com.company.common.models;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity(name = "move")
@@ -10,6 +10,7 @@ import java.util.UUID;
 public class MoveEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)

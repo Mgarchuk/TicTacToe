@@ -15,11 +15,10 @@ public class GameDto {
 
     private UUID id;
 
-    @NotNull(message = "settings id must not be empty")
-    private int settingsId;
+    private String link;
 
-    @NotNull(message = "room id must not be empty")
-    private int roomId;
+    @NotNull(message = "settings dto must not be empty")
+    private SettingsDto settings;
 
     @NotNull(message = "Game status must not be null")
     private GameStatus status;
