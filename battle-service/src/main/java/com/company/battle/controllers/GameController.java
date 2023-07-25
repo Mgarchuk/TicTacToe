@@ -56,7 +56,6 @@ public class GameController {
     }
 
     //ToDo: change randomUUID to userId from authorization
-    //ToDo: add check that linesCuntForWin less then squareSize
     @PostMapping("/create")
     public GameDto createGame(@Valid @RequestBody GameDto gameDto) {
         GameEntity gameEntity = gameMapper.toEntity(gameDto);
@@ -64,6 +63,7 @@ public class GameController {
         return gameMapper.toDTO(gameEntity);
     }
 
+    //ToDo: finish this method
     @PutMapping("/join/{link}")
     public GameDto joinGame(@PathVariable String link, @PathVariable UUID userId) {
         GameEntity gameEntity = gameService.getByLink(link);

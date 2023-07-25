@@ -21,4 +21,13 @@ public class Coordinate {
     public int hashCode() {
         return x * 31 + y;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Coordinate coordinate)) {
+            return false;
+        }
+
+        return coordinate.x == x && coordinate.y == y;
+    }
 }

@@ -1,22 +1,17 @@
 package com.company.battle.utils;
 
+import com.company.common.models.GameEntity;
 import com.company.common.models.MoveEntity;
 import com.company.common.models.UserEntity;
+import com.company.common.models.enums.GameStatus;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class GameUtils {
 
-    public static boolean checkWin(MoveEntity lastMove, UserEntity userEntity) {
-
-        Map<Coordinate, UUID> movesMap = new HashMap<>();
+    public static boolean checkWin(MoveEntity lastMove, UserEntity userEntity, Map<Coordinate, UUID> movesMap) {
         Coordinate lastCoordinate = new Coordinate(lastMove.getDescription());
-
-        for (MoveEntity move : lastMove.getGame().getMoves()) {
-            movesMap.put(new Coordinate(move.getDescription()), move.getUser().getId());
-        }
 
         int squareSize = lastMove.getGame().getSettings().getSquareSize();
         int linesCountForWin = lastMove.getGame().getSettings().getLinesCountForWin();
@@ -27,6 +22,33 @@ public class GameUtils {
                 || checkVerticalCoordinates(playerId, movesMap, linesCountForWin, lastCoordinate, squareSize)
                 || checkLeftDiagonalCoordinates(playerId, movesMap, linesCountForWin, lastCoordinate, squareSize)
                 || checkRightDiagonalCoordinates(playerId, movesMap, linesCountForWin, lastCoordinate, squareSize);
+    }
+
+    public static boolean isValidMove(MoveEntity move, Map<Coordinate, UUID> movesMap) {
+        String[] moveData = move.getDescription().split(";");
+        if (moveData.length != 2 || move.getGame() == null) {
+            return false;
+        }
+
+        int x;
+        int y;
+        try {
+            x = Integer.parseInt(moveData[0]);
+            y = Integer.parseInt(moveData[1]);
+            int squareSize = move.getGame().getSettings().getSquareSize();
+            if (x < 0 || x >= squareSize || y < 0 || y >= squareSize)
+                return false;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+
+        return movesMap.get(new Coordinate(x, y)) == null;
+    }
+
+    public static boolean isValidGame(GameEntity game) {
+        return game.getSettings().getLinesCountForWin() <= game.getSettings().getSquareSize()
+                && (game.getStatus() == GameStatus.PENDING || game.getStatus() == null)
+                && game.getWinner() == null;
     }
 
     private static boolean checkCoordinate(Coordinate nextCoordinate, int squareSize, UUID userId, Map<Coordinate, UUID> movesMap) {

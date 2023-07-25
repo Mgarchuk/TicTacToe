@@ -20,8 +20,8 @@ public abstract class MoveMapper {
 
     public static MoveMapper INSTANCE = Mappers.getMapper(MoveMapper.class);
 
-    @Mapping(target = "game", expression = "java(gameRepository.getById(UUID.fromString(dto.getGameId())))")
-    @Mapping(target = "user", expression = "java(userRepository.getById(UUID.fromString(dto.getUserId())))")
+    @Mapping(target = "game", expression = "java(gameRepository.findById(UUID.fromString(dto.getGameId())).orElse(null))")
+    @Mapping(target = "user", expression = "java(userRepository.findById(UUID.fromString(dto.getUserId())).orElse(null))")
     public abstract MoveEntity toEntity(MoveDto dto);
 
     @Mapping(target = "userId", source = "entity.user.id")

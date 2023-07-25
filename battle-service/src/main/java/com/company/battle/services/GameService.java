@@ -1,6 +1,7 @@
 package com.company.battle.services;
 
 import com.company.battle.repositories.GameRepository;
+import com.company.battle.utils.GameUtils;
 import com.company.common.models.GameEntity;
 import com.company.common.models.SettingsEntity;
 import com.company.common.models.UserEntity;
@@ -8,8 +9,11 @@ import com.company.common.models.enums.GameStatus;
 import com.company.common.models.enums.GameVisibility;
 import com.company.common.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,8 +58,11 @@ public class GameService {
     }
 
     public GameEntity create(GameEntity gameEntity, UUID userId) {
-        //ToDo: generate normal link
-        gameEntity.setLink(UUID.randomUUID().toString());
+        if (!GameUtils.isValidGame(gameEntity)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid game");
+        }
+
+        gameEntity.setLink(createLink());
         gameEntity.setStatus(GameStatus.PENDING);
         gameEntity.setCreationDate(LocalDateTime.now());
         if (gameEntity.getSettings().getXPlayerId() == null && gameEntity.getSettings().getOPlayerId() == null) {
@@ -93,5 +100,12 @@ public class GameService {
         } else {
             settingsEntity.setOPlayerId(userId);
         }
+    }
+
+    private String createLink() {
+        Random random = new Random();
+        byte[] bytes = new byte[32];
+        random.nextBytes(bytes);
+        return Base64.encodeBase64String(bytes);
     }
 }

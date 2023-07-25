@@ -4,6 +4,7 @@ import com.company.common.models.enums.GameStatus;
 import com.company.common.models.enums.GameVisibility;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,10 +28,11 @@ public class GameEntity {
     private GameVisibility visibility;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "winner_id", referencedColumnName = "id")
     private UserEntity winner;
 
-    @OneToMany(mappedBy = "game")
+    @ToString.Exclude
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<MoveEntity> moves;
 
     private LocalDateTime creationDate;

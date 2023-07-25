@@ -24,8 +24,6 @@ public class MoveController {
     @Autowired
     private final MoveMapper moveMapper;
 
-    //private final MoveMapper moveMapper = MoveMapper.INSTANCE;
-
     @GetMapping("/{gameId}")
     public List<MoveDto> getHistoryByGameId(@PathVariable UUID gameId) {
         List<MoveEntity> moveEntities = moveService.getByGameId(gameId);
@@ -36,7 +34,6 @@ public class MoveController {
 
     @PostMapping("/create")
     public MoveDto addMove(@Valid @RequestBody MoveDto moveDto) {
-        //ToDo: add move validation
         MoveEntity moveEntity = moveMapper.toEntity(moveDto);
         moveEntity = moveService.add(moveEntity);
         return moveMapper.toDTO(moveEntity);
