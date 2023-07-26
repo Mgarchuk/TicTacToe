@@ -48,10 +48,12 @@ public class GameService {
         Optional<GameEntity> gameEntity;
         if (settingsEntity.getOPlayerId() == null && settingsEntity.getXPlayerId() == null) {
             gameEntity = gameRepository.findGame(settingsEntity.getSquareSize(), settingsEntity.getLinesCountForWin(), settingsEntity.getMoveTimeLimit());
-        } else if (settingsEntity.getXPlayerId() != null) {
+        } else if (settingsEntity.getXPlayerId() != null && settingsEntity.getOPlayerId() == null) {
             gameEntity = gameRepository.findGameForXPlayer(settingsEntity.getSquareSize(), settingsEntity.getLinesCountForWin(), settingsEntity.getMoveTimeLimit());
-        } else {
+        } else if (settingsEntity.getXPlayerId() == null) {
             gameEntity = gameRepository.findGameForOPlayer(settingsEntity.getSquareSize(), settingsEntity.getLinesCountForWin(), settingsEntity.getMoveTimeLimit());
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request: you set up 2 players, but need 0 or 1");
         }
 
         return gameEntity.orElse(null);
@@ -74,8 +76,16 @@ public class GameService {
 
     public GameEntity joinGame(GameEntity gameEntity, UUID userId) {
         gameEntity.setStatus(GameStatus.ACTIVE);
-
-        //ToDo: set role
+        UUID xPlayerId = gameEntity.getSettings().getXPlayerId();
+        UUID oPlayerId = gameEntity.getSettings().getOPlayerId();
+        if (xPlayerId != null && oPlayerId != null || xPlayerId == null && oPlayerId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Нou can't connect to the game because there must already be 1 member in the game");
+        }
+        if (xPlayerId == null) {
+            gameEntity.getSettings().setXPlayerId(userId);
+        } else {
+            gameEntity.getSettings().setOPlayerId(userId);
+        }
         return gameRepository.save(gameEntity);
     }
 

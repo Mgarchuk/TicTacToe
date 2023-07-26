@@ -30,6 +30,11 @@ public class MoveService {
     private final GameRepository gameRepository;
 
     public MoveEntity add(MoveEntity moveEntity) {
+
+        if (moveEntity.getGame().getStatus().equals(GameStatus.FINISHED)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Game is over");
+        }
+
         Map<Coordinate, UUID> movesMap = new HashMap<>();
         for (MoveEntity move : moveEntity.getGame().getMoves()) {
             movesMap.put(new Coordinate(move.getDescription()), move.getUser().getId());

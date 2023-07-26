@@ -16,19 +16,18 @@ public interface GameRepository extends JpaRepository<GameEntity, UUID> {
 
     Optional<GameEntity> findByLink(String link);
 
-    //ToDo: add sort by date and limit 1
-    @Query(value = "SELECT * FROM game g WHERE g.square_size = :squareSize and g.lines_count_for_win = :linesCount and g.move_time_limit = :timeLimit and g.status = 'PENDING' " +
-            "and g.visibility = 'PUBLIC' and g.o_player_id is not null",
+    @Query(value = "SELECT * FROM game g WHERE g.square_size = :squareSize AND g.lines_count_for_win = :linesCount AND g.move_time_limit = :timeLimit AND g.status = 'PENDING' " +
+            "AND g.visibility = 'PUBLIC' and g.o_player_id IS NOT NULL ORDER BY creation_date LIMIT 1",
             nativeQuery = true)
     Optional<GameEntity> findGameForXPlayer(@Param("squareSize") int squareSize, @Param("linesCount") int linesCountForWin, @Param("timeLimit") int moveTimeLimit);
 
-    @Query(value = "SELECT * FROM game g WHERE g.square_size = :squareSize and g.lines_count_for_win = :linesCount and g.move_time_limit = :timeLimit and g.status = 'PENDING' " +
-            "and g.visibility = 'PUBLIC' and g.x_player_id is not null",
+    @Query(value = "SELECT * FROM game g WHERE g.square_size = :squareSize AND g.lines_count_for_win = :linesCount AND g.move_time_limit = :timeLimit AND g.status = 'PENDING' " +
+            "AND g.visibility = 'PUBLIC' and g.x_player_id IS NOT NULL ORDER BY creation_date LIMIT 1",
             nativeQuery = true)
     Optional<GameEntity> findGameForOPlayer(@Param("squareSize") int squareSize, @Param("linesCount") int linesCountForWin, @Param("timeLimit") int moveTimeLimit);
 
-    @Query(value = "SELECT * FROM game g WHERE g.square_size = :squareSize and g.lines_count_for_win = :linesCount and g.move_time_limit = :timeLimit and g.status = 'PENDING' " +
-            "and g.visibility = 'PUBLIC'",
+    @Query(value = "SELECT * FROM game g WHERE g.square_size = :squareSize AND g.lines_count_for_win = :linesCount AND g.move_time_limit = :timeLimit AND g.status = 'PENDING' " +
+            "AND g.visibility = 'PUBLIC' ORDER BY creation_date LIMIT 1",
             nativeQuery = true)
     Optional<GameEntity> findGame(@Param("squareSize") int squareSize, @Param("linesCount") int linesCountForWin, @Param("timeLimit") int moveTimeLimit);
 

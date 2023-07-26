@@ -30,8 +30,7 @@ public class GameUtils {
             return false;
         }
 
-        int x;
-        int y;
+        int x, y;
         try {
             x = Integer.parseInt(moveData[0]);
             y = Integer.parseInt(moveData[1]);
@@ -42,7 +41,12 @@ public class GameUtils {
             return false;
         }
 
-        return movesMap.get(new Coordinate(x, y)) == null;
+        if (movesMap.get(new Coordinate(x, y)) != null) {
+            return false;
+        }
+
+        return (movesMap.size() % 2 == 0 && move.getUser().getId().equals(move.getGame().getSettings().getXPlayerId()))
+                || (movesMap.size() % 2 == 1 && move.getUser().getId().equals(move.getGame().getSettings().getOPlayerId()));
     }
 
     public static boolean isValidGame(GameEntity game) {

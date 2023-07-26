@@ -63,7 +63,6 @@ public class GameController {
         return gameMapper.toDTO(gameEntity);
     }
 
-    //ToDo: finish this method
     @PutMapping("/join/{link}")
     public GameDto joinGame(@PathVariable String link, @PathVariable UUID userId) {
         GameEntity gameEntity = gameService.getByLink(link);
