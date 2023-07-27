@@ -32,10 +32,10 @@ public class MoveController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping("/create")
-    public MoveDto addMove(@Valid @RequestBody MoveDto moveDto) {
+    @PostMapping("/game/{gameId}/move")
+    public MoveDto addMove(@Valid @RequestBody MoveDto moveDto, @PathVariable UUID gameId) {
         MoveEntity moveEntity = moveMapper.toEntity(moveDto);
-        moveEntity = moveService.add(moveEntity);
+        moveEntity = moveService.add(moveEntity, gameId);
         return moveMapper.toDTO(moveEntity);
     }
 }

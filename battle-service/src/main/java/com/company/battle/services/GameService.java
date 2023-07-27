@@ -89,7 +89,15 @@ public class GameService {
         return gameRepository.save(gameEntity);
     }
 
-    public GameEntity leave(GameEntity gameEntity, UUID userId) {
+    public GameEntity leave(UUID gameId, UUID userId) {
+        GameEntity gameEntity = gameRepository.findById(gameId).orElse(null);
+
+        if (gameEntity == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no game with this id");
+        } else if (gameEntity.getSettings().getXPlayerId() != userId && gameEntity.getSettings().getOPlayerId() != userId) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not a member of this game");
+        }
+
         if (gameEntity.getStatus() == GameStatus.ACTIVE) {
             UUID winnerId = userId == gameEntity.getSettings().getXPlayerId() ? gameEntity.getSettings().getOPlayerId() : userId;
             Optional<UserEntity> winner = userRepository.findById(winnerId);

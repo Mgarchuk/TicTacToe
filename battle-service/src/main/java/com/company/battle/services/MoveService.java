@@ -29,9 +29,11 @@ public class MoveService {
     @Autowired
     private final GameRepository gameRepository;
 
-    public MoveEntity add(MoveEntity moveEntity) {
+    public MoveEntity add(MoveEntity moveEntity, UUID gameId) {
 
-        if (moveEntity.getGame().getStatus().equals(GameStatus.FINISHED)) {
+        if (gameId != moveEntity.getGame().getId()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Path variable gameId and gameId in move don't match");
+        } else if (moveEntity.getGame().getStatus().equals(GameStatus.FINISHED)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Game is over");
         }
 

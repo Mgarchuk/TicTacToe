@@ -71,10 +71,9 @@ public class GameController {
     }
 
     //ToDo: change userId as parameter to userId from authorization
-    @PutMapping("/leave/{userId}")
-    public GameDto leaveGame(@Valid @RequestBody GameDto gameDto, @PathVariable UUID userId) {
-        GameEntity gameEntity = gameMapper.toEntity(gameDto);
-        gameEntity = gameService.leave(gameEntity, userId);
+    @PutMapping("/game/{gameId}/user/{userId}/leave")
+    public GameDto leaveGame(@PathVariable UUID gameId, @PathVariable UUID userId) {
+        GameEntity gameEntity = gameService.leave(gameId, userId);
         return gameMapper.toDTO(gameEntity);
     }
 }
