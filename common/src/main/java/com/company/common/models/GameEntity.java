@@ -36,5 +36,4 @@ public class GameEntity {
     private List<MoveEntity> moves;
 
     private LocalDateTime creationDate;
-    private String link;
 }

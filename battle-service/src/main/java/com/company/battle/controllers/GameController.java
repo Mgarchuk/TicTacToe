@@ -34,12 +34,6 @@ public class GameController {
         return gameMapper.toDTO(gameEntity);
     }
 
-    @GetMapping("by-link/{link}")
-    public GameDto getGameByLink(@PathVariable String link) {
-        GameEntity gameEntity = gameService.getByLink(link);
-        return gameMapper.toDTO(gameEntity);
-    }
-
     @GetMapping("/public-games")
     public List<GameDto> getPublicGames() {
         List<GameEntity> gameEntities = gameService.getPublicGames();
@@ -63,9 +57,9 @@ public class GameController {
         return gameMapper.toDTO(gameEntity);
     }
 
-    @PutMapping("/join/{link}")
-    public GameDto joinGame(@PathVariable String link, @PathVariable UUID userId) {
-        GameEntity gameEntity = gameService.getByLink(link);
+    @PutMapping("/join/{id}")
+    public GameDto joinGame(@PathVariable UUID id, @PathVariable UUID userId) {
+        GameEntity gameEntity = gameService.getById(id);
         gameEntity = gameService.joinGame(gameEntity, userId);
         return gameMapper.toDTO(gameEntity);
     }

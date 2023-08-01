@@ -17,8 +17,6 @@ public class GameDto {
 
     private String id;
 
-    private String link;
-
     private LocalDateTime creationDate;
 
     @Valid

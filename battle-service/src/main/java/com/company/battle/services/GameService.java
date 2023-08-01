@@ -35,10 +35,6 @@ public class GameService {
         return gameRepository.findById(id).orElse(null);
     }
 
-    public GameEntity getByLink(String link) {
-        return gameRepository.findByLink(link).orElse(null);
-    }
-
     public List<GameEntity> getPublicGames() {
         return gameRepository.findByVisibility(GameVisibility.PUBLIC);
     }
@@ -64,7 +60,6 @@ public class GameService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid game");
         }
 
-        gameEntity.setLink(createLink());
         gameEntity.setStatus(GameStatus.PENDING);
         gameEntity.setCreationDate(LocalDateTime.now());
         if (gameEntity.getSettings().getXPlayerId() == null && gameEntity.getSettings().getOPlayerId() == null) {
@@ -118,12 +113,5 @@ public class GameService {
         } else {
             settingsEntity.setOPlayerId(userId);
         }
-    }
-
-    private String createLink() {
-        Random random = new Random();
-        byte[] bytes = new byte[32];
-        random.nextBytes(bytes);
-        return Base64.encodeBase64String(bytes);
     }
 }
