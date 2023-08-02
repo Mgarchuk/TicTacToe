@@ -2,14 +2,22 @@ package com.company.battle.services;
 
 import com.company.battle.repositories.GameRepository;
 import com.company.battle.utils.GameUtils;
+import com.company.common.dtos.SearchGameRequestDto;
 import com.company.common.models.GameEntity;
 import com.company.common.models.SettingsEntity;
 import com.company.common.models.UserEntity;
 import com.company.common.models.enums.GameStatus;
 import com.company.common.models.enums.GameVisibility;
+import com.company.common.models.enums.PreferableSide;
 import com.company.common.repositories.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -31,6 +39,9 @@ public class GameService {
     @Autowired
     private final UserRepository userRepository;
 
+    @PersistenceContext
+    private final EntityManager entityManager;
+
     public GameEntity getById(UUID id) {
         return gameRepository.findById(id).orElse(null);
     }
@@ -39,20 +50,33 @@ public class GameService {
         return gameRepository.findByVisibility(GameVisibility.PUBLIC);
     }
 
-    public GameEntity findGame(SettingsEntity settingsEntity) {
+    public List<GameEntity> findGame(SearchGameRequestDto requestDto) {
 
-        Optional<GameEntity> gameEntity;
-        if (settingsEntity.getOPlayerId() == null && settingsEntity.getXPlayerId() == null) {
-            gameEntity = gameRepository.findGame(settingsEntity.getSquareSize(), settingsEntity.getLinesCountForWin(), settingsEntity.getMoveTimeLimit());
-        } else if (settingsEntity.getXPlayerId() != null && settingsEntity.getOPlayerId() == null) {
-            gameEntity = gameRepository.findGameForXPlayer(settingsEntity.getSquareSize(), settingsEntity.getLinesCountForWin(), settingsEntity.getMoveTimeLimit());
-        } else if (settingsEntity.getXPlayerId() == null) {
-            gameEntity = gameRepository.findGameForOPlayer(settingsEntity.getSquareSize(), settingsEntity.getLinesCountForWin(), settingsEntity.getMoveTimeLimit());
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request: you set up 2 players, but need 0 or 1");
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<GameEntity> criteriaQuery = criteriaBuilder.createQuery(GameEntity.class);
+        Root<GameEntity> root = criteriaQuery.from(GameEntity.class);
+
+        Predicate[] predicates = new Predicate[6];
+        predicates[0] = criteriaBuilder.equal(root.get("settings").get("squareSize"), requestDto.getSquareSize());
+        predicates[1] = criteriaBuilder.equal(root.get("settings").get("linesCountForWin"), requestDto.getLinesCountForWin());
+        predicates[2] = criteriaBuilder.equal(root.get("settings").get("moveTimeLimit"), requestDto.getMoveTimeLimit());
+        predicates[3] = criteriaBuilder.equal(root.get("status"), GameStatus.PENDING);
+        predicates[4] = criteriaBuilder.equal(root.get("visibility"), GameVisibility.PUBLIC);
+
+        if (requestDto.getPreferableSide() == PreferableSide.O) {
+            predicates[5] = criteriaBuilder.isNull(root.get("settings").get("oPlayerId"));
+        } else if (requestDto.getPreferableSide() == PreferableSide.X) {
+            predicates[5] = criteriaBuilder.isNull(root.get("settings").get("xPlayerId"));
+        } else if (requestDto.getPreferableSide() == PreferableSide.ANY) {
+            predicates[5] = criteriaBuilder.or(root.get("settings").get("oPlayerId").isNull(), root.get("settings").get("xPlayerId").isNull());
         }
 
-        return gameEntity.orElse(null);
+        CriteriaQuery<GameEntity> select = criteriaQuery.select(root).where(predicates).orderBy(criteriaBuilder.asc(root.get("creationDate")));
+        TypedQuery<GameEntity> typedQuery = entityManager.createQuery(select).setMaxResults(requestDto.getGameCountLimit());
+
+        entityManager.close();
+        return typedQuery.getResultList();
+
     }
 
     public GameEntity create(GameEntity gameEntity, UUID userId) {

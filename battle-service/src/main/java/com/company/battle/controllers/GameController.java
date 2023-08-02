@@ -4,9 +4,8 @@ import com.company.battle.mappers.GameMapper;
 import com.company.battle.mappers.SettingsMapper;
 import com.company.battle.services.GameService;
 import com.company.common.dtos.GameDto;
-import com.company.common.dtos.SettingsDto;
+import com.company.common.dtos.SearchGameRequestDto;
 import com.company.common.models.GameEntity;
-import com.company.common.models.SettingsEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +42,11 @@ public class GameController {
     }
 
     @GetMapping("/find-game")
-    public GameDto findGame(@Valid @RequestBody SettingsDto settingsDto) {
-        SettingsEntity settingsEntity = settingsMapper.toEntity(settingsDto);
-        GameEntity gameEntity = gameService.findGame(settingsEntity);
-        return gameMapper.toDTO(gameEntity);
+    public List<GameDto> findGames(@Valid @RequestBody SearchGameRequestDto requestDto) {
+        List<GameEntity> gameEntities = gameService.findGame(requestDto);
+        return gameEntities.stream()
+                .map(gameMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     //ToDo: change randomUUID to userId from authorization
@@ -57,6 +57,7 @@ public class GameController {
         return gameMapper.toDTO(gameEntity);
     }
 
+    //ToDo: Allow connection to only 1 game
     @PutMapping("/join/{id}")
     public GameDto joinGame(@PathVariable UUID id, @PathVariable UUID userId) {
         GameEntity gameEntity = gameService.getById(id);
