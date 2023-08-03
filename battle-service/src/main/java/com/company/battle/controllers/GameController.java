@@ -41,8 +41,8 @@ public class GameController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/find-game")
-    public List<GameDto> findGames(@Valid @RequestBody SearchGameRequestDto requestDto) {
+    @GetMapping("/search")
+    public List<GameDto> searchGames(@Valid @RequestBody SearchGameRequestDto requestDto) {
         List<GameEntity> gameEntities = gameService.findGame(requestDto);
         return gameEntities.stream()
                 .map(gameMapper::toDTO)
@@ -59,16 +59,16 @@ public class GameController {
 
     //ToDo: Allow connection to only 1 game
     @PutMapping("/join/{id}")
-    public GameDto joinGame(@PathVariable UUID id, @PathVariable UUID userId) {
+    public GameDto joinGame(@PathVariable UUID id) {
         GameEntity gameEntity = gameService.getById(id);
-        gameEntity = gameService.joinGame(gameEntity, userId);
+        gameEntity = gameService.joinGame(gameEntity, UUID.randomUUID());
         return gameMapper.toDTO(gameEntity);
     }
 
     //ToDo: change userId as parameter to userId from authorization
-    @PutMapping("/game/{gameId}/user/{userId}/leave")
-    public GameDto leaveGame(@PathVariable UUID gameId, @PathVariable UUID userId) {
-        GameEntity gameEntity = gameService.leave(gameId, userId);
+    @PutMapping("/{gameId}/leave")
+    public GameDto leaveGame(@PathVariable UUID gameId) {
+        GameEntity gameEntity = gameService.leave(gameId, UUID.randomUUID());
         return gameMapper.toDTO(gameEntity);
     }
 }

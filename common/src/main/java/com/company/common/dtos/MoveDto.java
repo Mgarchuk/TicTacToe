@@ -20,7 +20,6 @@ public class MoveDto {
     private LocalDateTime creationDate;
 
     @UUID
-    @NotNull
     @JsonProperty("game_id")
     private String gameId;
 

@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("api/v1/move")
+@RequestMapping("api/v1/game/{gameId}")
 @RequiredArgsConstructor
 public class MoveController {
 
@@ -24,7 +24,7 @@ public class MoveController {
     @Autowired
     private final MoveMapper moveMapper;
 
-    @GetMapping("/{gameId}")
+    @GetMapping("/moves")
     public List<MoveDto> getHistoryByGameId(@PathVariable UUID gameId) {
         List<MoveEntity> moveEntities = moveService.getByGameId(gameId);
         return moveEntities.stream()
@@ -32,7 +32,7 @@ public class MoveController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping("/game/{gameId}/move")
+    @PostMapping("/move")
     public MoveDto addMove(@Valid @RequestBody MoveDto moveDto, @PathVariable UUID gameId) {
         MoveEntity moveEntity = moveMapper.toEntity(moveDto);
         moveEntity = moveService.add(moveEntity, gameId);

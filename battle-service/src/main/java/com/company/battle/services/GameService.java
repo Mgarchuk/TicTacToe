@@ -1,7 +1,7 @@
 package com.company.battle.services;
 
 import com.company.battle.repositories.GameRepository;
-import com.company.battle.utils.GameUtils;
+import com.company.battle.utils.services.GameValidationService;
 import com.company.common.dtos.SearchGameRequestDto;
 import com.company.common.models.GameEntity;
 import com.company.common.models.SettingsEntity;
@@ -24,10 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -56,22 +53,30 @@ public class GameService {
         CriteriaQuery<GameEntity> criteriaQuery = criteriaBuilder.createQuery(GameEntity.class);
         Root<GameEntity> root = criteriaQuery.from(GameEntity.class);
 
-        Predicate[] predicates = new Predicate[6];
-        predicates[0] = criteriaBuilder.equal(root.get("settings").get("squareSize"), requestDto.getSquareSize());
-        predicates[1] = criteriaBuilder.equal(root.get("settings").get("linesCountForWin"), requestDto.getLinesCountForWin());
-        predicates[2] = criteriaBuilder.equal(root.get("settings").get("moveTimeLimit"), requestDto.getMoveTimeLimit());
-        predicates[3] = criteriaBuilder.equal(root.get("status"), GameStatus.PENDING);
-        predicates[4] = criteriaBuilder.equal(root.get("visibility"), GameVisibility.PUBLIC);
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(criteriaBuilder.equal(root.get("status"), GameStatus.PENDING));
+        predicates.add(criteriaBuilder.equal(root.get("visibility"), GameVisibility.PUBLIC));
 
-        if (requestDto.getPreferableSide() == PreferableSide.O) {
-            predicates[5] = criteriaBuilder.isNull(root.get("settings").get("oPlayerId"));
-        } else if (requestDto.getPreferableSide() == PreferableSide.X) {
-            predicates[5] = criteriaBuilder.isNull(root.get("settings").get("xPlayerId"));
-        } else if (requestDto.getPreferableSide() == PreferableSide.ANY) {
-            predicates[5] = criteriaBuilder.or(root.get("settings").get("oPlayerId").isNull(), root.get("settings").get("xPlayerId").isNull());
+        if (requestDto.getSquareSize() != null) {
+            predicates.add(criteriaBuilder.equal(root.get("settings").get("squareSize"), requestDto.getSquareSize()));
+        }
+        if (requestDto.getLinesCountForWin() != null) {
+            predicates.add(criteriaBuilder.equal(root.get("settings").get("linesCountForWin"), requestDto.getLinesCountForWin()));
+        }
+        if (requestDto.getMoveTimeLimit() != null) {
+            predicates.add(criteriaBuilder.equal(root.get("settings").get("moveTimeLimit"), requestDto.getMoveTimeLimit()));
         }
 
-        CriteriaQuery<GameEntity> select = criteriaQuery.select(root).where(predicates).orderBy(criteriaBuilder.asc(root.get("creationDate")));
+
+        if (requestDto.getPreferableSide() == PreferableSide.O) {
+            predicates.add(criteriaBuilder.isNull(root.get("settings").get("oPlayerId")));
+        } else if (requestDto.getPreferableSide() == PreferableSide.X) {
+            predicates.add(criteriaBuilder.isNull(root.get("settings").get("xPlayerId")));
+        } else if (requestDto.getPreferableSide() == PreferableSide.ANY) {
+            predicates.add(criteriaBuilder.or(root.get("settings").get("oPlayerId").isNull(), root.get("settings").get("xPlayerId").isNull()));
+        }
+
+        CriteriaQuery<GameEntity> select = criteriaQuery.select(root).where(predicates.toArray(new Predicate[0])).orderBy(criteriaBuilder.asc(root.get("creationDate")));
         TypedQuery<GameEntity> typedQuery = entityManager.createQuery(select).setMaxResults(requestDto.getGameCountLimit());
 
         entityManager.close();
@@ -80,8 +85,8 @@ public class GameService {
     }
 
     public GameEntity create(GameEntity gameEntity, UUID userId) {
-        if (!GameUtils.isValidGame(gameEntity)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid game");
+        if (!GameValidationService.isValidGameToCreate(gameEntity)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid game to create");
         }
 
         gameEntity.setStatus(GameStatus.PENDING);

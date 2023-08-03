@@ -3,7 +3,8 @@ package com.company.battle.services;
 import com.company.battle.repositories.GameRepository;
 import com.company.battle.repositories.MoveRepository;
 import com.company.battle.utils.Coordinate;
-import com.company.battle.utils.GameUtils;
+import com.company.battle.utils.services.GameValidationService;
+import com.company.battle.utils.services.GameWinnerService;
 import com.company.common.models.GameEntity;
 import com.company.common.models.MoveEntity;
 import com.company.common.models.enums.GameStatus;
@@ -31,26 +32,29 @@ public class MoveService {
 
     public MoveEntity add(MoveEntity moveEntity, UUID gameId) {
 
-        if (gameId != moveEntity.getGame().getId()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Path variable gameId and gameId in move don't match");
-        } else if (moveEntity.getGame().getStatus().equals(GameStatus.FINISHED)) {
+        GameEntity game = gameRepository.findById(gameId).orElse(null);
+
+        if (game == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't find game by gameId");
+        } else if (game.getStatus().equals(GameStatus.PENDING)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Game didn't start");
+        } else if (game.getStatus().equals(GameStatus.FINISHED)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Game is over");
         }
 
         Map<Coordinate, UUID> movesMap = new HashMap<>();
-        for (MoveEntity move : moveEntity.getGame().getMoves()) {
+        for (MoveEntity move : game.getMoves()) {
             movesMap.put(new Coordinate(move.getDescription()), move.getUser().getId());
         }
 
-        if (!GameUtils.isValidMove(moveEntity, movesMap)) {
+        if (!GameValidationService.isValidMove(moveEntity, movesMap)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid move");
         }
 
         moveEntity.setCreationDate(LocalDateTime.now());
         moveEntity = moveRepository.save(moveEntity);
-        moveEntity.getGame().getMoves().add(moveEntity);
 
-        if (GameUtils.checkWin(moveEntity, moveEntity.getUser(), movesMap)) {
+        if (GameWinnerService.checkWin(moveEntity, moveEntity.getUser(), movesMap)) {
             GameEntity gameEntity = moveEntity.getGame();
             gameEntity.setStatus(GameStatus.FINISHED);
             gameEntity.setWinner(moveEntity.getUser());
