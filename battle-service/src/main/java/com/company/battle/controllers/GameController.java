@@ -3,12 +3,14 @@ package com.company.battle.controllers;
 import com.company.battle.mappers.GameMapper;
 import com.company.battle.mappers.SettingsMapper;
 import com.company.battle.services.GameService;
+import com.company.battle.utils.specifications.SearchGameSpecification;
 import com.company.common.dtos.GameDto;
 import com.company.common.dtos.SearchGameRequestDto;
 import com.company.common.models.GameEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,8 +45,10 @@ public class GameController {
 
     @GetMapping("/search")
     public List<GameDto> searchGames(@Valid @RequestBody SearchGameRequestDto requestDto) {
-        List<GameEntity> gameEntities = gameService.findGame(requestDto);
-        return gameEntities.stream()
+        Specification<GameEntity> specification = SearchGameSpecification.of(requestDto.getSquareSize(), requestDto.getLinesCountForWin(), requestDto.getMoveTimeLimit(), requestDto.getPreferableSide());
+        return gameService
+                .findAll(specification)
+                .stream()
                 .map(gameMapper::toDTO)
                 .collect(Collectors.toList());
     }

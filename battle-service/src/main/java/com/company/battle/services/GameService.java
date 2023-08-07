@@ -19,6 +19,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -41,6 +42,10 @@ public class GameService {
 
     public GameEntity getById(UUID id) {
         return gameRepository.findById(id).orElse(null);
+    }
+
+    public List<GameEntity> findAll(final Specification<GameEntity> specification) {
+        return gameRepository.findAll(specification);
     }
 
     public List<GameEntity> getPublicGames() {
@@ -75,6 +80,7 @@ public class GameService {
         } else if (requestDto.getPreferableSide() == PreferableSide.ANY) {
             predicates.add(criteriaBuilder.or(root.get("settings").get("oPlayerId").isNull(), root.get("settings").get("xPlayerId").isNull()));
         }
+
 
         CriteriaQuery<GameEntity> select = criteriaQuery.select(root).where(predicates.toArray(new Predicate[0])).orderBy(criteriaBuilder.asc(root.get("creationDate")));
         TypedQuery<GameEntity> typedQuery = entityManager.createQuery(select).setMaxResults(requestDto.getGameCountLimit());
