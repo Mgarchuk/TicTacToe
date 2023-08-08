@@ -1,43 +1,78 @@
 package com.company.battle.controllers;
 
+import com.company.battle.mappers.GameMapper;
+import com.company.battle.mappers.SettingsMapper;
+import com.company.battle.services.GameService;
+import com.company.battle.utils.specifications.SearchGameSpecification;
 import com.company.common.dtos.GameDto;
-import com.company.common.dtos.SettingsDto;
+import com.company.common.dtos.SearchGameRequestDto;
+import com.company.common.models.GameEntity;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1/game")
+@RequiredArgsConstructor
 public class GameController {
+
+    @Autowired
+    private final GameService gameService;
+
+    private final GameMapper gameMapper = GameMapper.INSTANCE;
+
+    private final SettingsMapper settingsMapper = SettingsMapper.INSTANCE;
 
     @GetMapping("/{id}")
     public GameDto getGameById(@PathVariable UUID id) {
-        return null;
+        GameEntity gameEntity = gameService.getById(id);
+        return gameMapper.toDTO(gameEntity);
     }
 
-    @GetMapping("/{link}")
-    public GameDto getGameByLink(@PathVariable String link) {
-        return null;
+    @GetMapping("/public-games")
+    public List<GameDto> getPublicGames() {
+        List<GameEntity> gameEntities = gameService.getPublicGames();
+        return gameEntities.stream()
+                .map(gameMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    @GetMapping
-    public List<GameDto> getActiveGames() {
-        return null;
+    @GetMapping("/search")
+    public List<GameDto> searchGames(@Valid @RequestBody SearchGameRequestDto requestDto) {
+        Specification<GameEntity> specification = SearchGameSpecification.of(requestDto.getSquareSize(), requestDto.getLinesCountForWin(), requestDto.getMoveTimeLimit(), requestDto.getPreferableSide());
+        return gameService
+                .findAll(specification)
+                .stream()
+                .map(gameMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
+    //ToDo: change randomUUID to userId from authorization
     @PostMapping("/create")
-    public GameDto createGame(@RequestBody GameDto gameDto) {
-        return null;
+    public GameDto createGame(@Valid @RequestBody GameDto gameDto) {
+        GameEntity gameEntity = gameMapper.toEntity(gameDto);
+        gameEntity = gameService.create(gameEntity, UUID.randomUUID());
+        return gameMapper.toDTO(gameEntity);
     }
 
-    @PutMapping("/join/{link}")
-    public GameDto joinGame(@PathVariable String link) {
-        return null;
+    //ToDo: Allow connection to only 1 game
+    @PutMapping("/join/{id}")
+    public GameDto joinGame(@PathVariable UUID id) {
+        GameEntity gameEntity = gameService.getById(id);
+        gameEntity = gameService.joinGame(gameEntity, UUID.randomUUID());
+        return gameMapper.toDTO(gameEntity);
     }
 
-    @PutMapping("/leave")
-    public GameDto leaveGame(@RequestBody GameDto gameDto) {
-        return null;
+    //ToDo: change userId as parameter to userId from authorization
+    @PutMapping("/{gameId}/leave")
+    public GameDto leaveGame(@PathVariable UUID gameId) {
+        GameEntity gameEntity = gameService.leave(gameId, UUID.randomUUID());
+        return gameMapper.toDTO(gameEntity);
     }
 }

@@ -1,9 +1,12 @@
 package com.company.common.models;
 
 import com.company.common.models.enums.GameStatus;
+import com.company.common.models.enums.GameVisibility;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,15 +18,22 @@ public class GameEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String link;
-
     @Embedded
     private SettingsEntity settings;
 
-    @Column(name = "game_status")
     @Enumerated(EnumType.STRING)
-    private GameStatus gameStatus;
+    private GameStatus status;
 
-    @OneToMany(mappedBy = "game")
+    @Enumerated(EnumType.STRING)
+    private GameVisibility visibility;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "winner_id", referencedColumnName = "id")
+    private UserEntity winner;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<MoveEntity> moves;
+
+    private LocalDateTime creationDate;
 }

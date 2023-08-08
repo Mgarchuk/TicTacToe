@@ -1,27 +1,33 @@
 package com.company.common.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.UUID;
 
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class MoveDto {
 
-    private UUID id;
+    private String id;
+    private LocalDateTime creationDate;
 
-    @NotNull(message = "game id must not be empty")
-    private int gameId;
+    @UUID
+    @JsonProperty("game_id")
+    private String gameId;
 
-    @NotNull(message = "user id must not be empty")
-    private int userId;
+    @NotNull
+    @JsonProperty("user_id")
+    private String userId;
 
-    //ToDo: add regular expression and change min and max values
-    @Size(min = 1, max = 10, message = "description must have size between 1 and 10")
+    @Size(min = 3, max = 5, message = "description must have size between 1 and 5")
+    @NotNull
     private String description;
 }
