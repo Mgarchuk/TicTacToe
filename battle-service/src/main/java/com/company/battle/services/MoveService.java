@@ -34,13 +34,7 @@ public class MoveService {
 
         GameEntity game = gameRepository.findById(gameId).orElse(null);
 
-        if (game == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't find game by gameId");
-        } else if (game.getStatus().equals(GameStatus.PENDING)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Game didn't start");
-        } else if (game.getStatus().equals(GameStatus.FINISHED)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Game is over");
-        }
+        GameValidationService.validGameToAddingMove(game);
 
         Map<Coordinate, UUID> movesMap = new HashMap<>();
         for (MoveEntity move : game.getMoves()) {

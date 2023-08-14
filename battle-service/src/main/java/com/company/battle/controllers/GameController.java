@@ -4,6 +4,7 @@ import com.company.battle.mappers.GameMapper;
 import com.company.battle.mappers.SettingsMapper;
 import com.company.battle.services.GameService;
 import com.company.battle.utils.specifications.SearchGameSpecification;
+import com.company.common.dtos.CreateGameRequestDto;
 import com.company.common.dtos.GameDto;
 import com.company.common.dtos.SearchGameRequestDto;
 import com.company.common.models.GameEntity;
@@ -45,7 +46,8 @@ public class GameController {
 
     @GetMapping("/search")
     public List<GameDto> searchGames(@Valid @RequestBody SearchGameRequestDto requestDto) {
-        Specification<GameEntity> specification = SearchGameSpecification.of(requestDto.getSquareSize(), requestDto.getLinesCountForWin(), requestDto.getMoveTimeLimit(), requestDto.getPreferableSide());
+        Specification<GameEntity> specification = SearchGameSpecification.of(requestDto.getSquareSize(),
+                requestDto.getLinesCountForWin(), requestDto.getMoveTimeLimit(), requestDto.getPreferableSide());
         return gameService
                 .findAll(specification)
                 .stream()
@@ -55,16 +57,14 @@ public class GameController {
 
     //ToDo: change randomUUID to userId from authorization
     @PostMapping("/create")
-    public GameDto createGame(@Valid @RequestBody GameDto gameDto) {
-        GameEntity gameEntity = gameMapper.toEntity(gameDto);
-        gameEntity = gameService.create(gameEntity, UUID.randomUUID());
+    public GameDto createGame(@Valid @RequestBody CreateGameRequestDto createGameRequestDto) {
+        GameEntity gameEntity = gameService.create(createGameRequestDto, UUID.randomUUID());
         return gameMapper.toDTO(gameEntity);
     }
 
-    //ToDo: Allow connection to only 1 game
-    @PutMapping("/join/{id}")
-    public GameDto joinGame(@PathVariable UUID id) {
-        GameEntity gameEntity = gameService.getById(id);
+    @PutMapping("/join/{gameId}")
+    public GameDto joinGame(@PathVariable UUID gameId) {
+        GameEntity gameEntity = gameService.getById(gameId);
         gameEntity = gameService.joinGame(gameEntity, UUID.randomUUID());
         return gameMapper.toDTO(gameEntity);
     }
