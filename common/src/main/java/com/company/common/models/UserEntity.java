@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,10 +16,13 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    private LocalDateTime creationDate;
+
+    @Column(unique = true)
     private String username;
     private int rating;
-    private String password;
-    private String salt;
+
+    @Column(unique = true)
     private String email;
     private boolean isAlive;
 

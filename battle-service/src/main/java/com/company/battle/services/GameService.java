@@ -21,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -72,7 +74,6 @@ public class GameService {
             predicates.add(criteriaBuilder.equal(root.get("settings").get("moveTimeLimit"), requestDto.getMoveTimeLimit()));
         }
 
-
         if (requestDto.getPreferableSide() == PreferableSide.O) {
             predicates.add(criteriaBuilder.isNull(root.get("settings").get("oPlayerId")));
         } else if (requestDto.getPreferableSide() == PreferableSide.X) {
@@ -80,7 +81,6 @@ public class GameService {
         } else if (requestDto.getPreferableSide() == PreferableSide.ANY) {
             predicates.add(criteriaBuilder.or(root.get("settings").get("oPlayerId").isNull(), root.get("settings").get("xPlayerId").isNull()));
         }
-
 
         CriteriaQuery<GameEntity> select = criteriaQuery.select(root).where(predicates.toArray(new Predicate[0])).orderBy(criteriaBuilder.asc(root.get("creationDate")));
         TypedQuery<GameEntity> typedQuery = entityManager.createQuery(select).setMaxResults(requestDto.getGameCountLimit());
@@ -90,7 +90,7 @@ public class GameService {
 
     }
 
-    public GameEntity create(GameEntity gameEntity, UUID userId) {
+    public GameEntity create(GameEntity gameEntity) {
         if (!GameValidationService.isValidGameToCreate(gameEntity)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid game to create");
         }
@@ -98,38 +98,41 @@ public class GameService {
         gameEntity.setStatus(GameStatus.PENDING);
         gameEntity.setCreationDate(LocalDateTime.now());
         if (gameEntity.getSettings().getXPlayerId() == null && gameEntity.getSettings().getOPlayerId() == null) {
-            setRandomRole(gameEntity.getSettings(), userId);
+            setRandomRole(gameEntity.getSettings(), getCurrentUser().getId());
         }
 
         return gameRepository.save(gameEntity);
     }
 
-    public GameEntity joinGame(GameEntity gameEntity, UUID userId) {
+    public GameEntity joinGame(GameEntity gameEntity) {
         gameEntity.setStatus(GameStatus.ACTIVE);
         UUID xPlayerId = gameEntity.getSettings().getXPlayerId();
         UUID oPlayerId = gameEntity.getSettings().getOPlayerId();
         if (xPlayerId != null && oPlayerId != null || xPlayerId == null && oPlayerId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Нou can't connect to the game because there must already be 1 member in the game");
         }
+
+        UserEntity currentUser = getCurrentUser();
         if (xPlayerId == null) {
-            gameEntity.getSettings().setXPlayerId(userId);
+            gameEntity.getSettings().setXPlayerId(currentUser.getId());
         } else {
-            gameEntity.getSettings().setOPlayerId(userId);
+            gameEntity.getSettings().setOPlayerId(currentUser.getId());
         }
         return gameRepository.save(gameEntity);
     }
 
-    public GameEntity leave(UUID gameId, UUID userId) {
+    public GameEntity leave(UUID gameId) {
         GameEntity gameEntity = gameRepository.findById(gameId).orElse(null);
 
+        UserEntity currentUser = getCurrentUser();
         if (gameEntity == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no game with this id");
-        } else if (gameEntity.getSettings().getXPlayerId() != userId && gameEntity.getSettings().getOPlayerId() != userId) {
+        } else if (!gameEntity.getSettings().getXPlayerId().equals(currentUser.getId()) && !gameEntity.getSettings().getOPlayerId().equals(currentUser.getId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not a member of this game");
         }
 
         if (gameEntity.getStatus() == GameStatus.ACTIVE) {
-            UUID winnerId = userId == gameEntity.getSettings().getXPlayerId() ? gameEntity.getSettings().getOPlayerId() : userId;
+            UUID winnerId = currentUser.getId().equals(gameEntity.getSettings().getXPlayerId()) ? gameEntity.getSettings().getOPlayerId() : currentUser.getId();
             Optional<UserEntity> winner = userRepository.findById(winnerId);
 
             gameEntity.setWinner(winner.orElse(null));
@@ -148,5 +151,17 @@ public class GameService {
         } else {
             settingsEntity.setOPlayerId(userId);
         }
+    }
+
+    private UserEntity getCurrentUser() {
+        final Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = jwt.getClaims().get("email").toString();
+        UserEntity user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There are no user with this email");
+        }
+
+        return user;
     }
 }

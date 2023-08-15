@@ -57,7 +57,8 @@ public class GameController {
     @PostMapping("/create")
     public GameDto createGame(@Valid @RequestBody GameDto gameDto) {
         GameEntity gameEntity = gameMapper.toEntity(gameDto);
-        gameEntity = gameService.create(gameEntity, UUID.randomUUID());
+
+        gameEntity = gameService.create(gameEntity);
         return gameMapper.toDTO(gameEntity);
     }
 
@@ -65,14 +66,14 @@ public class GameController {
     @PutMapping("/join/{id}")
     public GameDto joinGame(@PathVariable UUID id) {
         GameEntity gameEntity = gameService.getById(id);
-        gameEntity = gameService.joinGame(gameEntity, UUID.randomUUID());
+        gameEntity = gameService.joinGame(gameEntity);
         return gameMapper.toDTO(gameEntity);
     }
 
     //ToDo: change userId as parameter to userId from authorization
     @PutMapping("/{gameId}/leave")
     public GameDto leaveGame(@PathVariable UUID gameId) {
-        GameEntity gameEntity = gameService.leave(gameId, UUID.randomUUID());
+        GameEntity gameEntity = gameService.leave(gameId);
         return gameMapper.toDTO(gameEntity);
     }
 }
