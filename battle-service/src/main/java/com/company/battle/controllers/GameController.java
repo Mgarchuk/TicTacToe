@@ -1,7 +1,6 @@
 package com.company.battle.controllers;
 
 import com.company.battle.mappers.GameMapper;
-import com.company.battle.mappers.SettingsMapper;
 import com.company.battle.services.GameService;
 import com.company.battle.utils.specifications.SearchGameSpecification;
 import com.company.common.dtos.CreateGameRequestDto;
@@ -27,8 +26,6 @@ public class GameController {
     private final GameService gameService;
 
     private final GameMapper gameMapper = GameMapper.INSTANCE;
-
-    private final SettingsMapper settingsMapper = SettingsMapper.INSTANCE;
 
     @GetMapping("/{id}")
     public GameDto getGameById(@PathVariable UUID id) {
