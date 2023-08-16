@@ -41,14 +41,14 @@ public class MoveService {
             movesMap.put(new Coordinate(move.getDescription()), move.getUser().getId());
         }
 
-        if (!GameValidationService.isValidMove(moveEntity, movesMap)) {
+        if (!GameValidationService.isValidMove(game, moveEntity, movesMap)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid move");
         }
 
         moveEntity.setCreationDate(LocalDateTime.now());
         moveEntity = moveRepository.save(moveEntity);
 
-        if (GameWinnerService.checkWin(moveEntity, moveEntity.getUser(), movesMap)) {
+        if (GameWinnerService.checkWin(game, moveEntity, moveEntity.getUser(), movesMap)) {
             GameEntity gameEntity = moveEntity.getGame();
             gameEntity.setStatus(GameStatus.FINISHED);
             gameEntity.setWinner(moveEntity.getUser());

@@ -13,9 +13,9 @@ import java.util.UUID;
 
 public class GameValidationService {
 
-    public static boolean isValidMove(MoveEntity move, Map<Coordinate, UUID> movesMap) {
+    public static boolean isValidMove(GameEntity game, MoveEntity move, Map<Coordinate, UUID> movesMap) {
         String[] moveData = move.getDescription().split(";");
-        if (moveData.length != 2 || move.getGame() == null) {
+        if (moveData.length != 2) {
             return false;
         }
 
@@ -23,7 +23,7 @@ public class GameValidationService {
         try {
             x = Integer.parseInt(moveData[0]);
             y = Integer.parseInt(moveData[1]);
-            int squareSize = move.getGame().getSettings().getSquareSize();
+            int squareSize = game.getSettings().getSquareSize();
             if (x < 0 || x >= squareSize || y < 0 || y >= squareSize)
                 return false;
         } catch (NumberFormatException ex) {
@@ -34,8 +34,8 @@ public class GameValidationService {
             return false;
         }
 
-        return (movesMap.size() % 2 == 0 && move.getUser().getId().equals(move.getGame().getSettings().getXPlayerId()))
-                || (movesMap.size() % 2 == 1 && move.getUser().getId().equals(move.getGame().getSettings().getOPlayerId()));
+        return (movesMap.size() % 2 == 0 && move.getUser().getId().equals(game.getSettings().getXPlayerId()))
+                || (movesMap.size() % 2 == 1 && move.getUser().getId().equals(game.getSettings().getOPlayerId()));
     }
 
     public static boolean isValidGameToCreate(CreateGameRequestDto createGameRequestDto) {

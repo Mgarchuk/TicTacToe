@@ -1,6 +1,7 @@
 package com.company.battle.utils.services;
 
 import com.company.battle.utils.Coordinate;
+import com.company.common.models.GameEntity;
 import com.company.common.models.MoveEntity;
 import com.company.common.models.UserEntity;
 
@@ -9,11 +10,11 @@ import java.util.UUID;
 
 public class GameWinnerService {
 
-    public static boolean checkWin(MoveEntity lastMove, UserEntity userEntity, Map<Coordinate, UUID> movesMap) {
+    public static boolean checkWin(GameEntity game, MoveEntity lastMove, UserEntity userEntity, Map<Coordinate, UUID> movesMap) {
         Coordinate lastCoordinate = new Coordinate(lastMove.getDescription());
 
-        int squareSize = lastMove.getGame().getSettings().getSquareSize();
-        int linesCountForWin = lastMove.getGame().getSettings().getLinesCountForWin();
+        int squareSize = game.getSettings().getSquareSize();
+        int linesCountForWin = game.getSettings().getLinesCountForWin();
 
         UUID playerId = userEntity.getId();
 
