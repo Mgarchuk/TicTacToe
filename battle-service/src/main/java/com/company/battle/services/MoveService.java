@@ -5,8 +5,11 @@ import com.company.battle.repositories.MoveRepository;
 import com.company.battle.utils.Coordinate;
 import com.company.battle.utils.services.GameValidationService;
 import com.company.battle.utils.services.GameWinnerService;
+import com.company.battle.utils.services.UserAuthorizationService;
+import com.company.common.dtos.AddMoveRequestDto;
 import com.company.common.models.GameEntity;
 import com.company.common.models.MoveEntity;
+import com.company.common.models.UserEntity;
 import com.company.common.models.enums.GameStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +33,10 @@ public class MoveService {
     @Autowired
     private final GameRepository gameRepository;
 
-    public MoveEntity add(MoveEntity moveEntity, UUID gameId) {
+    @Autowired
+    private final UserAuthorizationService userAuthorizationService;
+
+    public MoveEntity add(AddMoveRequestDto addMoveRequestDto, UUID gameId) {
 
         GameEntity game = gameRepository.findById(gameId).orElse(null);
 
@@ -47,10 +53,16 @@ public class MoveService {
             movesMap.put(new Coordinate(move.getDescription()), move.getUser().getId());
         }
 
-        if (!GameValidationService.isValidMove(moveEntity, movesMap)) {
+        UserEntity user = userAuthorizationService.getCurrentUser();
+
+        if (!GameValidationService.isValidMove(game, user, addMoveRequestDto, movesMap)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid move");
         }
 
+        MoveEntity moveEntity = new MoveEntity();
+        moveEntity.setDescription(addMoveRequestDto.getDescription());
+        moveEntity.setGame(game);
+        moveEntity.setUser(user);
         moveEntity.setCreationDate(LocalDateTime.now());
         moveEntity = moveRepository.save(moveEntity);
 

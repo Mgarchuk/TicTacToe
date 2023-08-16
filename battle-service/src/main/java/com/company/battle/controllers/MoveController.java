@@ -2,6 +2,7 @@ package com.company.battle.controllers;
 
 import com.company.battle.mappers.MoveMapper;
 import com.company.battle.services.MoveService;
+import com.company.common.dtos.AddMoveRequestDto;
 import com.company.common.dtos.MoveDto;
 import com.company.common.models.MoveEntity;
 import jakarta.validation.Valid;
@@ -33,9 +34,8 @@ public class MoveController {
     }
 
     @PostMapping("/move")
-    public MoveDto addMove(@Valid @RequestBody MoveDto moveDto, @PathVariable UUID gameId) {
-        MoveEntity moveEntity = moveMapper.toEntity(moveDto);
-        moveEntity = moveService.add(moveEntity, gameId);
+    public MoveDto addMove(@Valid @RequestBody AddMoveRequestDto addMoveRequestDto, @PathVariable UUID gameId) {
+        MoveEntity moveEntity = moveService.add(addMoveRequestDto, gameId);
         return moveMapper.toDTO(moveEntity);
     }
 }

@@ -2,6 +2,7 @@ package com.company.battle.services;
 
 import com.company.battle.repositories.GameRepository;
 import com.company.battle.utils.services.GameValidationService;
+import com.company.battle.utils.services.UserAuthorizationService;
 import com.company.common.dtos.SearchGameRequestDto;
 import com.company.common.models.GameEntity;
 import com.company.common.models.SettingsEntity;
@@ -21,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -38,6 +37,9 @@ public class GameService {
 
     @Autowired
     private final UserRepository userRepository;
+
+    @Autowired
+    private final UserAuthorizationService userAuthorizationService;
 
     @PersistenceContext
     private final EntityManager entityManager;
@@ -98,7 +100,7 @@ public class GameService {
         gameEntity.setStatus(GameStatus.PENDING);
         gameEntity.setCreationDate(LocalDateTime.now());
         if (gameEntity.getSettings().getXPlayerId() == null && gameEntity.getSettings().getOPlayerId() == null) {
-            setRandomRole(gameEntity.getSettings(), getCurrentUser().getId());
+            setRandomRole(gameEntity.getSettings(), userAuthorizationService.getCurrentUser().getId());
         }
 
         return gameRepository.save(gameEntity);
@@ -112,7 +114,7 @@ public class GameService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Нou can't connect to the game because there must already be 1 member in the game");
         }
 
-        UserEntity currentUser = getCurrentUser();
+        UserEntity currentUser = userAuthorizationService.getCurrentUser();
         if (xPlayerId == null) {
             gameEntity.getSettings().setXPlayerId(currentUser.getId());
         } else {
@@ -124,7 +126,7 @@ public class GameService {
     public GameEntity leave(UUID gameId) {
         GameEntity gameEntity = gameRepository.findById(gameId).orElse(null);
 
-        UserEntity currentUser = getCurrentUser();
+        UserEntity currentUser = userAuthorizationService.getCurrentUser();
         if (gameEntity == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no game with this id");
         } else if (!gameEntity.getSettings().getXPlayerId().equals(currentUser.getId()) && !gameEntity.getSettings().getOPlayerId().equals(currentUser.getId())) {
@@ -151,17 +153,5 @@ public class GameService {
         } else {
             settingsEntity.setOPlayerId(userId);
         }
-    }
-
-    private UserEntity getCurrentUser() {
-        final Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String email = jwt.getClaims().get("email").toString();
-        UserEntity user = userRepository.findByEmail(email).orElse(null);
-
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There are no user with this email");
-        }
-
-        return user;
     }
 }
