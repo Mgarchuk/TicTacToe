@@ -2,7 +2,6 @@ package com.company.battle.services;
 
 import com.company.battle.repositories.GameRepository;
 import com.company.battle.utils.services.GameValidationService;
-import com.company.battle.utils.services.UserAuthorizationService;
 import com.company.common.dtos.SearchGameRequestDto;
 import com.company.common.models.GameEntity;
 import com.company.common.models.SettingsEntity;
@@ -37,9 +36,6 @@ public class GameService {
 
     @Autowired
     private final UserRepository userRepository;
-
-    @Autowired
-    private final UserAuthorizationService userAuthorizationService;
 
     @PersistenceContext
     private final EntityManager entityManager;
@@ -92,7 +88,7 @@ public class GameService {
 
     }
 
-    public GameEntity create(GameEntity gameEntity) {
+    public GameEntity create(GameEntity gameEntity, UUID userId) {
         if (!GameValidationService.isValidGameToCreate(gameEntity)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid game to create");
         }
@@ -100,13 +96,13 @@ public class GameService {
         gameEntity.setStatus(GameStatus.PENDING);
         gameEntity.setCreationDate(LocalDateTime.now());
         if (gameEntity.getSettings().getXPlayerId() == null && gameEntity.getSettings().getOPlayerId() == null) {
-            setRandomRole(gameEntity.getSettings(), userAuthorizationService.getCurrentUser().getId());
+            setRandomRole(gameEntity.getSettings(), userId);
         }
 
         return gameRepository.save(gameEntity);
     }
 
-    public GameEntity joinGame(GameEntity gameEntity) {
+    public GameEntity joinGame(GameEntity gameEntity, UserEntity currentUser) {
         gameEntity.setStatus(GameStatus.ACTIVE);
         UUID xPlayerId = gameEntity.getSettings().getXPlayerId();
         UUID oPlayerId = gameEntity.getSettings().getOPlayerId();
@@ -114,7 +110,6 @@ public class GameService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Нou can't connect to the game because there must already be 1 member in the game");
         }
 
-        UserEntity currentUser = userAuthorizationService.getCurrentUser();
         if (xPlayerId == null) {
             gameEntity.getSettings().setXPlayerId(currentUser.getId());
         } else {
@@ -123,10 +118,9 @@ public class GameService {
         return gameRepository.save(gameEntity);
     }
 
-    public GameEntity leave(UUID gameId) {
+    public GameEntity leave(UUID gameId, UserEntity currentUser) {
         GameEntity gameEntity = gameRepository.findById(gameId).orElse(null);
 
-        UserEntity currentUser = userAuthorizationService.getCurrentUser();
         if (gameEntity == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no game with this id");
         } else if (!gameEntity.getSettings().getXPlayerId().equals(currentUser.getId()) && !gameEntity.getSettings().getOPlayerId().equals(currentUser.getId())) {

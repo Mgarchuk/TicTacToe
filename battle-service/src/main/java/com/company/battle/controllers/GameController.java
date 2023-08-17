@@ -3,6 +3,7 @@ package com.company.battle.controllers;
 import com.company.battle.mappers.GameMapper;
 import com.company.battle.mappers.SettingsMapper;
 import com.company.battle.services.GameService;
+import com.company.battle.utils.services.UserAuthorizationService;
 import com.company.battle.utils.specifications.SearchGameSpecification;
 import com.company.common.dtos.GameDto;
 import com.company.common.dtos.SearchGameRequestDto;
@@ -24,6 +25,9 @@ public class GameController {
 
     @Autowired
     private final GameService gameService;
+
+    @Autowired
+    private final UserAuthorizationService userAuthorizationService;
 
     private final GameMapper gameMapper = GameMapper.INSTANCE;
 
@@ -58,7 +62,7 @@ public class GameController {
     public GameDto createGame(@Valid @RequestBody GameDto gameDto) {
         GameEntity gameEntity = gameMapper.toEntity(gameDto);
 
-        gameEntity = gameService.create(gameEntity);
+        gameEntity = gameService.create(gameEntity, userAuthorizationService.getCurrentUser().getId());
         return gameMapper.toDTO(gameEntity);
     }
 
@@ -66,14 +70,14 @@ public class GameController {
     @PutMapping("/join/{id}")
     public GameDto joinGame(@PathVariable UUID id) {
         GameEntity gameEntity = gameService.getById(id);
-        gameEntity = gameService.joinGame(gameEntity);
+        gameEntity = gameService.joinGame(gameEntity, userAuthorizationService.getCurrentUser());
         return gameMapper.toDTO(gameEntity);
     }
 
     //ToDo: change userId as parameter to userId from authorization
     @PutMapping("/{gameId}/leave")
     public GameDto leaveGame(@PathVariable UUID gameId) {
-        GameEntity gameEntity = gameService.leave(gameId);
+        GameEntity gameEntity = gameService.leave(gameId, userAuthorizationService.getCurrentUser());
         return gameMapper.toDTO(gameEntity);
     }
 }

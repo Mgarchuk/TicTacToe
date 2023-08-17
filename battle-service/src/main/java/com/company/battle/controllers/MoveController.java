@@ -2,6 +2,7 @@ package com.company.battle.controllers;
 
 import com.company.battle.mappers.MoveMapper;
 import com.company.battle.services.MoveService;
+import com.company.battle.utils.services.UserAuthorizationService;
 import com.company.common.dtos.AddMoveRequestDto;
 import com.company.common.dtos.MoveDto;
 import com.company.common.models.MoveEntity;
@@ -23,6 +24,9 @@ public class MoveController {
     private final MoveService moveService;
 
     @Autowired
+    private final UserAuthorizationService userAuthorizationService;
+
+    @Autowired
     private final MoveMapper moveMapper;
 
     @GetMapping("/moves")
@@ -35,7 +39,7 @@ public class MoveController {
 
     @PostMapping("/move")
     public MoveDto addMove(@Valid @RequestBody AddMoveRequestDto addMoveRequestDto, @PathVariable UUID gameId) {
-        MoveEntity moveEntity = moveService.add(addMoveRequestDto, gameId);
+        MoveEntity moveEntity = moveService.add(addMoveRequestDto, gameId, userAuthorizationService.getCurrentUser());
         return moveMapper.toDTO(moveEntity);
     }
 }

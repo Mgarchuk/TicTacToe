@@ -33,10 +33,7 @@ public class MoveService {
     @Autowired
     private final GameRepository gameRepository;
 
-    @Autowired
-    private final UserAuthorizationService userAuthorizationService;
-
-    public MoveEntity add(AddMoveRequestDto addMoveRequestDto, UUID gameId) {
+    public MoveEntity add(AddMoveRequestDto addMoveRequestDto, UUID gameId, UserEntity currentUser) {
 
         GameEntity game = gameRepository.findById(gameId).orElse(null);
 
@@ -53,16 +50,14 @@ public class MoveService {
             movesMap.put(new Coordinate(move.getDescription()), move.getUser().getId());
         }
 
-        UserEntity user = userAuthorizationService.getCurrentUser();
-
-        if (!GameValidationService.isValidMove(game, user, addMoveRequestDto, movesMap)) {
+        if (!GameValidationService.isValidMove(game, currentUser, addMoveRequestDto, movesMap)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid move");
         }
 
         MoveEntity moveEntity = new MoveEntity();
         moveEntity.setDescription(addMoveRequestDto.getDescription());
         moveEntity.setGame(game);
-        moveEntity.setUser(user);
+        moveEntity.setUser(currentUser);
         moveEntity.setCreationDate(LocalDateTime.now());
         moveEntity = moveRepository.save(moveEntity);
 
