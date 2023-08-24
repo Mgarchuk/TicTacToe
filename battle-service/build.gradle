@@ -18,6 +18,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation:3.1.1'
     implementation 'org.hibernate:hibernate-core:6.2.7.Final'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.1.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
     implementation project(':common')

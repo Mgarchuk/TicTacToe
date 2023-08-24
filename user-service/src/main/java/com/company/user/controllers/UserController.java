@@ -1,11 +1,13 @@
 package com.company.user.controllers;
 
 import com.company.common.dtos.UserDto;
-import com.company.common.models.UserEntity;
+import com.company.user.models.UserEntity;
 import com.company.user.mapper.UserMapper;
 import com.company.user.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -23,6 +25,14 @@ public class UserController {
     @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable UUID id) {
         UserEntity user = userService.getById(id);
+        return userMapper.toDTO(user);
+    }
+
+    @GetMapping("/by-email")
+    public UserDto getUserByEmail() {
+        final Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = jwt.getClaims().get("email").toString();
+        UserEntity user = userService.getByEmail(email);
         return userMapper.toDTO(user);
     }
 

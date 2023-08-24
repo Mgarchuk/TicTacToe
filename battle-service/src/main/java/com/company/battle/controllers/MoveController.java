@@ -39,7 +39,7 @@ public class MoveController {
 
     @PostMapping("/move")
     public MoveDto addMove(@Valid @RequestBody AddMoveRequestDto addMoveRequestDto, @PathVariable UUID gameId) {
-        MoveEntity moveEntity = moveService.add(addMoveRequestDto, gameId, userAuthorizationService.getCurrentUser());
+        MoveEntity moveEntity = moveService.add(addMoveRequestDto, gameId, userAuthorizationService.getCurrentUser().getId());
         return moveMapper.toDTO(moveEntity);
     }
 }

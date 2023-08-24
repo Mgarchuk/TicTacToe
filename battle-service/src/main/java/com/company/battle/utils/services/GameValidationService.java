@@ -3,7 +3,6 @@ package com.company.battle.utils.services;
 import com.company.battle.utils.Coordinate;
 import com.company.common.dtos.AddMoveRequestDto;
 import com.company.common.models.GameEntity;
-import com.company.common.models.UserEntity;
 import com.company.common.models.enums.GameStatus;
 import lombok.RequiredArgsConstructor;
 
@@ -13,7 +12,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GameValidationService {
 
-    public static boolean isValidMove(GameEntity game, UserEntity user, AddMoveRequestDto addMoveRequestDto, Map<Coordinate, UUID> movesMap) {
+    public static boolean isValidMove(GameEntity game, UUID userId, AddMoveRequestDto addMoveRequestDto, Map<Coordinate, UUID> movesMap) {
         String[] moveData = addMoveRequestDto.getDescription().split(";");
         if (moveData.length != 2) {
             return false;
@@ -34,13 +33,13 @@ public class GameValidationService {
             return false;
         }
 
-        return (movesMap.size() % 2 == 0 && user.getId().equals(game.getSettings().getXPlayerId()))
-                || (movesMap.size() % 2 == 1 && user.getId().equals(game.getSettings().getOPlayerId()));
+        return (movesMap.size() % 2 == 0 && userId.equals(game.getSettings().getXPlayerId()))
+                || (movesMap.size() % 2 == 1 && userId.equals(game.getSettings().getOPlayerId()));
     }
 
     public static boolean isValidGameToCreate(GameEntity game) {
         return game.getSettings().getLinesCountForWin() <= game.getSettings().getSquareSize()
                 && (game.getStatus() == GameStatus.PENDING || game.getStatus() == null)
-                && game.getWinner() == null;
+                && game.getWinnerId() == null;
     }
 }

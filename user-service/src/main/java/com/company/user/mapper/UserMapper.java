@@ -1,7 +1,7 @@
 package com.company.user.mapper;
 
 import com.company.common.dtos.UserDto;
-import com.company.common.models.UserEntity;
+import com.company.user.models.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

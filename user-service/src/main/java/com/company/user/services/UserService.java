@@ -1,8 +1,8 @@
 package com.company.user.services;
 
-import com.company.common.models.UserEntity;
+import com.company.user.models.UserEntity;
 import com.company.common.models.enums.Role;
-import com.company.common.repositories.UserRepository;
+import com.company.user.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +23,10 @@ public class UserService {
 
     public UserEntity getById(UUID id) {
         return userRepository.findById(id).orElse(null);
+    }
+
+    public UserEntity getByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
     }
 
     public UserEntity registration() {

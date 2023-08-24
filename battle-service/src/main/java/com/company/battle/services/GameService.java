@@ -5,11 +5,9 @@ import com.company.battle.utils.services.GameValidationService;
 import com.company.common.dtos.SearchGameRequestDto;
 import com.company.common.models.GameEntity;
 import com.company.common.models.SettingsEntity;
-import com.company.common.models.UserEntity;
 import com.company.common.models.enums.GameStatus;
 import com.company.common.models.enums.GameVisibility;
 import com.company.common.models.enums.PreferableSide;
-import com.company.common.repositories.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -25,7 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,9 +34,6 @@ public class GameService {
 
     @Autowired
     private final GameRepository gameRepository;
-
-    @Autowired
-    private final UserRepository userRepository;
 
     @PersistenceContext
     private final EntityManager entityManager;
@@ -102,7 +100,7 @@ public class GameService {
         return gameRepository.save(gameEntity);
     }
 
-    public GameEntity joinGame(GameEntity gameEntity, UserEntity currentUser) {
+    public GameEntity joinGame(GameEntity gameEntity, UUID userId) {
         gameEntity.setStatus(GameStatus.ACTIVE);
         UUID xPlayerId = gameEntity.getSettings().getXPlayerId();
         UUID oPlayerId = gameEntity.getSettings().getOPlayerId();
@@ -111,27 +109,25 @@ public class GameService {
         }
 
         if (xPlayerId == null) {
-            gameEntity.getSettings().setXPlayerId(currentUser.getId());
+            gameEntity.getSettings().setXPlayerId(userId);
         } else {
-            gameEntity.getSettings().setOPlayerId(currentUser.getId());
+            gameEntity.getSettings().setOPlayerId(userId);
         }
         return gameRepository.save(gameEntity);
     }
 
-    public GameEntity leave(UUID gameId, UserEntity currentUser) {
+    public GameEntity leave(UUID gameId, UUID userId) {
         GameEntity gameEntity = gameRepository.findById(gameId).orElse(null);
 
         if (gameEntity == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no game with this id");
-        } else if (!gameEntity.getSettings().getXPlayerId().equals(currentUser.getId()) && !gameEntity.getSettings().getOPlayerId().equals(currentUser.getId())) {
+        } else if (!gameEntity.getSettings().getXPlayerId().equals(userId) && !gameEntity.getSettings().getOPlayerId().equals(userId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not a member of this game");
         }
 
         if (gameEntity.getStatus() == GameStatus.ACTIVE) {
-            UUID winnerId = currentUser.getId().equals(gameEntity.getSettings().getXPlayerId()) ? gameEntity.getSettings().getOPlayerId() : currentUser.getId();
-            Optional<UserEntity> winner = userRepository.findById(winnerId);
-
-            gameEntity.setWinner(winner.orElse(null));
+            UUID winnerId = userId.equals(gameEntity.getSettings().getXPlayerId()) ? gameEntity.getSettings().getOPlayerId() : userId;
+            gameEntity.setWinnerId(winnerId);
         }
 
         gameEntity.setStatus(GameStatus.FINISHED);
