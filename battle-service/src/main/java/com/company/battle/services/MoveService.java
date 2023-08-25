@@ -5,6 +5,7 @@ import com.company.battle.repositories.MoveRepository;
 import com.company.battle.utils.Coordinate;
 import com.company.battle.utils.services.GameValidationService;
 import com.company.battle.utils.services.GameWinnerService;
+import com.company.common.dtos.AddMoveRequestDto;
 import com.company.common.models.GameEntity;
 import com.company.common.models.MoveEntity;
 import com.company.common.models.enums.GameStatus;
@@ -30,7 +31,7 @@ public class MoveService {
     @Autowired
     private final GameRepository gameRepository;
 
-    public MoveEntity add(MoveEntity moveEntity, UUID gameId) {
+    public MoveEntity add(AddMoveRequestDto addMoveRequestDto, UUID gameId, UUID userId) {
 
         GameEntity game = gameRepository.findById(gameId).orElse(null);
 
@@ -44,20 +45,24 @@ public class MoveService {
 
         Map<Coordinate, UUID> movesMap = new HashMap<>();
         for (MoveEntity move : game.getMoves()) {
-            movesMap.put(new Coordinate(move.getDescription()), move.getUser().getId());
+            movesMap.put(new Coordinate(move.getDescription()), move.getUserId());
         }
 
-        if (!GameValidationService.isValidMove(moveEntity, movesMap)) {
+        if (!GameValidationService.isValidMove(game, userId, addMoveRequestDto, movesMap)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid move");
         }
 
+        MoveEntity moveEntity = new MoveEntity();
+        moveEntity.setDescription(addMoveRequestDto.getDescription());
+        moveEntity.setGame(game);
+        moveEntity.setUserId(userId);
         moveEntity.setCreationDate(LocalDateTime.now());
         moveEntity = moveRepository.save(moveEntity);
 
-        if (GameWinnerService.checkWin(moveEntity, moveEntity.getUser(), movesMap)) {
+        if (GameWinnerService.checkWin(moveEntity, userId, movesMap)) {
             GameEntity gameEntity = moveEntity.getGame();
             gameEntity.setStatus(GameStatus.FINISHED);
-            gameEntity.setWinner(moveEntity.getUser());
+            gameEntity.setWinnerId(moveEntity.getUserId());
             gameRepository.save(gameEntity);
         }
         return moveEntity;

@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 public class MoveDto {
 
     private String id;
+
     private LocalDateTime creationDate;
 
     @UUID

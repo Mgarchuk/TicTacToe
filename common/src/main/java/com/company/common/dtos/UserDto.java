@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -15,15 +16,14 @@ public class UserDto {
 
     private UUID id;
 
+    private LocalDateTime creationDate;
+
     @NotBlank
     private String username;
 
     @NotNull
     @Positive
     private Integer rating;
-
-    @NotBlank
-    private String salt;
 
     @Size(min = 3, max = 264)
     private String email;

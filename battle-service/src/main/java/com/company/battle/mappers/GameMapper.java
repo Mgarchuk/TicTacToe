@@ -13,6 +13,5 @@ public interface GameMapper {
 
     GameEntity toEntity(GameDto dto);
 
-    @Mapping(target = "winnerId", source = "entity.winner.id")
     GameDto toDTO(GameEntity entity);
 }

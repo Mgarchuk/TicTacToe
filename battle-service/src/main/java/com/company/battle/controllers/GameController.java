@@ -1,8 +1,8 @@
 package com.company.battle.controllers;
 
 import com.company.battle.mappers.GameMapper;
-import com.company.battle.mappers.SettingsMapper;
 import com.company.battle.services.GameService;
+import com.company.battle.utils.services.UserAuthorizationService;
 import com.company.battle.utils.specifications.SearchGameSpecification;
 import com.company.common.dtos.GameDto;
 import com.company.common.dtos.SearchGameRequestDto;
@@ -25,9 +25,10 @@ public class GameController {
     @Autowired
     private final GameService gameService;
 
-    private final GameMapper gameMapper = GameMapper.INSTANCE;
+    @Autowired
+    private final UserAuthorizationService userAuthorizationService;
 
-    private final SettingsMapper settingsMapper = SettingsMapper.INSTANCE;
+    private final GameMapper gameMapper = GameMapper.INSTANCE;
 
     @GetMapping("/{id}")
     public GameDto getGameById(@PathVariable UUID id) {
@@ -53,11 +54,11 @@ public class GameController {
                 .collect(Collectors.toList());
     }
 
-    //ToDo: change randomUUID to userId from authorization
     @PostMapping("/create")
     public GameDto createGame(@Valid @RequestBody GameDto gameDto) {
         GameEntity gameEntity = gameMapper.toEntity(gameDto);
-        gameEntity = gameService.create(gameEntity, UUID.randomUUID());
+
+        gameEntity = gameService.create(gameEntity, userAuthorizationService.getCurrentUser().getId());
         return gameMapper.toDTO(gameEntity);
     }
 
@@ -65,14 +66,13 @@ public class GameController {
     @PutMapping("/join/{id}")
     public GameDto joinGame(@PathVariable UUID id) {
         GameEntity gameEntity = gameService.getById(id);
-        gameEntity = gameService.joinGame(gameEntity, UUID.randomUUID());
+        gameEntity = gameService.joinGame(gameEntity, userAuthorizationService.getCurrentUser().getId());
         return gameMapper.toDTO(gameEntity);
     }
 
-    //ToDo: change userId as parameter to userId from authorization
     @PutMapping("/{gameId}/leave")
     public GameDto leaveGame(@PathVariable UUID gameId) {
-        GameEntity gameEntity = gameService.leave(gameId, UUID.randomUUID());
+        GameEntity gameEntity = gameService.leave(gameId, userAuthorizationService.getCurrentUser().getId());
         return gameMapper.toDTO(gameEntity);
     }
 }

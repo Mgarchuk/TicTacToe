@@ -5,11 +5,9 @@ import com.company.battle.utils.services.GameValidationService;
 import com.company.common.dtos.SearchGameRequestDto;
 import com.company.common.models.GameEntity;
 import com.company.common.models.SettingsEntity;
-import com.company.common.models.UserEntity;
 import com.company.common.models.enums.GameStatus;
 import com.company.common.models.enums.GameVisibility;
 import com.company.common.models.enums.PreferableSide;
-import com.company.common.repositories.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -25,7 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,9 +34,6 @@ public class GameService {
 
     @Autowired
     private final GameRepository gameRepository;
-
-    @Autowired
-    private final UserRepository userRepository;
 
     @PersistenceContext
     private final EntityManager entityManager;
@@ -72,7 +70,6 @@ public class GameService {
             predicates.add(criteriaBuilder.equal(root.get("settings").get("moveTimeLimit"), requestDto.getMoveTimeLimit()));
         }
 
-
         if (requestDto.getPreferableSide() == PreferableSide.O) {
             predicates.add(criteriaBuilder.isNull(root.get("settings").get("oPlayerId")));
         } else if (requestDto.getPreferableSide() == PreferableSide.X) {
@@ -80,7 +77,6 @@ public class GameService {
         } else if (requestDto.getPreferableSide() == PreferableSide.ANY) {
             predicates.add(criteriaBuilder.or(root.get("settings").get("oPlayerId").isNull(), root.get("settings").get("xPlayerId").isNull()));
         }
-
 
         CriteriaQuery<GameEntity> select = criteriaQuery.select(root).where(predicates.toArray(new Predicate[0])).orderBy(criteriaBuilder.asc(root.get("creationDate")));
         TypedQuery<GameEntity> typedQuery = entityManager.createQuery(select).setMaxResults(requestDto.getGameCountLimit());
@@ -111,6 +107,7 @@ public class GameService {
         if (xPlayerId != null && oPlayerId != null || xPlayerId == null && oPlayerId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Нou can't connect to the game because there must already be 1 member in the game");
         }
+
         if (xPlayerId == null) {
             gameEntity.getSettings().setXPlayerId(userId);
         } else {
@@ -124,15 +121,13 @@ public class GameService {
 
         if (gameEntity == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no game with this id");
-        } else if (gameEntity.getSettings().getXPlayerId() != userId && gameEntity.getSettings().getOPlayerId() != userId) {
+        } else if (!gameEntity.getSettings().getXPlayerId().equals(userId) && !gameEntity.getSettings().getOPlayerId().equals(userId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You are not a member of this game");
         }
 
         if (gameEntity.getStatus() == GameStatus.ACTIVE) {
-            UUID winnerId = userId == gameEntity.getSettings().getXPlayerId() ? gameEntity.getSettings().getOPlayerId() : userId;
-            Optional<UserEntity> winner = userRepository.findById(winnerId);
-
-            gameEntity.setWinner(winner.orElse(null));
+            UUID winnerId = userId.equals(gameEntity.getSettings().getXPlayerId()) ? gameEntity.getSettings().getOPlayerId() : userId;
+            gameEntity.setWinnerId(winnerId);
         }
 
         gameEntity.setStatus(GameStatus.FINISHED);

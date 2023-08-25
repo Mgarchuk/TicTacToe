@@ -27,9 +27,7 @@ public class GameEntity {
     @Enumerated(EnumType.STRING)
     private GameVisibility visibility;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "winner_id", referencedColumnName = "id")
-    private UserEntity winner;
+    private UUID winnerId;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)

@@ -19,9 +19,7 @@ public class MoveEntity {
     @JoinColumn(name = "game_id", referencedColumnName = "id")
     private GameEntity game;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private UserEntity user;
+    private UUID userId;
 
     private LocalDateTime creationDate;
     private String description;
