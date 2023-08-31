@@ -52,12 +52,15 @@ public class GameValidationService {
         }
     }
 
-    public static void validGameToJoinGame(GameEntity game, UUID xPlayerId, UUID oPlayerId) {
+    public static void validGameToJoinGame(GameEntity game, UUID xPlayerId, UUID oPlayerId, UUID userId) {
         if (game.getStatus() != GameStatus.PENDING) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Game status must be PENDING");
         }
         if (xPlayerId != null && oPlayerId != null || xPlayerId == null && oPlayerId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Нou can't connect to the game because there must already be 1 member in the game");
+        }
+        if (xPlayerId != null && xPlayerId.equals(userId) || oPlayerId != null && oPlayerId.equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Players must be different");
         }
     }
 

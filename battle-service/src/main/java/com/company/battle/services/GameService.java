@@ -73,7 +73,7 @@ public class GameService {
     public GameEntity joinGame(GameEntity gameEntity, UUID userId) {
         UUID xPlayerId = gameEntity.getSettings().getXPlayerId();
         UUID oPlayerId = gameEntity.getSettings().getOPlayerId();
-        GameValidationService.validGameToJoinGame(gameEntity, xPlayerId, oPlayerId);
+        GameValidationService.validGameToJoinGame(gameEntity, xPlayerId, oPlayerId, userId);
         gameEntity.setStatus(GameStatus.ACTIVE);
         if (xPlayerId == null) {
             gameEntity.getSettings().setXPlayerId(userId);
