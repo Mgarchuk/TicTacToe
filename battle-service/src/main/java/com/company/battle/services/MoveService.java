@@ -34,27 +34,21 @@ public class MoveService {
 
         GameEntity game = gameRepository.findById(gameId).orElse(null);
 
-        if (game == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't find game by gameId");
-        } else if (game.getStatus().equals(GameStatus.PENDING)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Game didn't start");
-        } else if (game.getStatus().equals(GameStatus.FINISHED)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Game is over");
-        }
+        GameValidationService.validGameToAddingMove(game);
 
         Map<Coordinate, UUID> movesMap = new HashMap<>();
         for (MoveEntity move : game.getMoves()) {
             movesMap.put(new Coordinate(move.getDescription()), move.getUser().getId());
         }
 
-        if (!GameValidationService.isValidMove(moveEntity, movesMap)) {
+        if (!GameValidationService.isValidMove(game, moveEntity, movesMap)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid move");
         }
 
         moveEntity.setCreationDate(LocalDateTime.now());
         moveEntity = moveRepository.save(moveEntity);
 
-        if (GameWinnerService.checkWin(moveEntity, moveEntity.getUser(), movesMap)) {
+        if (GameWinnerService.checkWin(game, moveEntity, moveEntity.getUser(), movesMap)) {
             GameEntity gameEntity = moveEntity.getGame();
             gameEntity.setStatus(GameStatus.FINISHED);
             gameEntity.setWinner(moveEntity.getUser());

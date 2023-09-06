@@ -9,9 +9,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper
 public interface GameMapper {
 
-    GameMapper INSTANCE = Mappers.getMapper( GameMapper.class );
-
-    GameEntity toEntity(GameDto dto);
+    GameMapper INSTANCE = Mappers.getMapper(GameMapper.class);
 
     @Mapping(target = "winnerId", source = "entity.winner.id")
     GameDto toDTO(GameEntity entity);

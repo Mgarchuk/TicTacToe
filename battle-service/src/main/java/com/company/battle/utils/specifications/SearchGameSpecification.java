@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchGameSpecification {
-    public static Specification<GameEntity> of(int squareSize, int linesCountForWin, int moveTimeLimit, PreferableSide preferableSide) {
+    public static Specification<GameEntity> of(Integer squareSize, Integer linesCountForWin, Integer moveTimeLimit, PreferableSide preferableSide) {
 
         List<Specification<GameEntity>> specifications = new ArrayList<>();
 
@@ -20,15 +20,15 @@ public class SearchGameSpecification {
         return SpecificationUtils.createFilterAnd(specifications);
     }
 
-    private static Specification<GameEntity> hasSquareSize(int squareSize) {
+    private static Specification<GameEntity> hasSquareSize(Integer squareSize) {
         return (companyRoot, cq, cb) -> cb.equal(companyRoot.get("settings").get("squareSize"), squareSize);
     }
 
-    private static Specification<GameEntity> hasLinesCountForWin(int linesCountForWin) {
+    private static Specification<GameEntity> hasLinesCountForWin(Integer linesCountForWin) {
         return (companyRoot, cq, cb) -> cb.equal(companyRoot.get("settings").get("linesCountForWin"), linesCountForWin);
     }
 
-    private static Specification<GameEntity> hasMoveTimeLimit(int moveTimeLimit) {
+    private static Specification<GameEntity> hasMoveTimeLimit(Integer moveTimeLimit) {
         return (companyRoot, cq, cb) -> cb.equal(companyRoot.get("settings").get("moveTimeLimit"), moveTimeLimit);
     }
 
